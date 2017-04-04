@@ -1,2 +1,2 @@
-# RPCrypto
-A decentralized role playing game simulator
+# CryptoSim.js
+A distributed role playing game simulator
