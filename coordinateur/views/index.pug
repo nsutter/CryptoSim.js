@@ -2,4 +2,42 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+
+  form(action='/regles', method='post')
+
+    h3 Paramétrages des règles
+
+    .form-group
+      label(for='Nressources') Limite de ressources prises par un joueur en un coup
+      input.form-control(type='text', id='Nressources', name='Nressources', placeholder='10', required)
+
+    .checkbox
+      label
+        input(type='checkbox', name='voler')
+        | Les joueurs peuvent voler les autres joueurs
+    .checkbox
+      label
+        input(type='checkbox', name='observer')
+        | Les joueurs peuvent observer les autres joueurs et les producteurs
+
+    .form-group
+      label Objectifs de ressources à atteindre pour gagner la partie
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='objectif-nom') Nom
+            input.form-control(type='text', id='objectif-nom', name='objectif-nom', placeholder='Nom')
+          | &nbsp;
+          .form-group
+            .sr-only(for='objectif-quantite') Quantité
+            input.form-control(type='text', id='objectif-quantite', name='objectif-quantite', placeholder='Quantité')
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+    h3 Paramétrages des joueurs
+
+    h3 Paramétrages des producteurs
+
+    button.btn.btn-success(type='submit') OK !
