@@ -8,10 +8,6 @@ block content
     hr
     h3 Paramétrage des règles
 
-    .form-group
-      label(for='Nressources') Limite de ressources prises par un joueur en un coup
-      input.form-control(type='text', id='Nressources', name='Nressources', placeholder='10', required)
-
     .checkbox
       label
         input(type='checkbox', name='voler')
@@ -27,16 +23,31 @@ block content
         .form-inline
           .form-group
             .sr-only(for='objectif-nom') Nom
-            input.form-control(type='text', id='objectif-nom', name='objectif-nom', placeholder='Nom')
+            input.form-control(type='text', id='objectif-nom', name='objectif-nom', placeholder='Nom', required)
           | &nbsp;
           .form-group
             .sr-only(for='objectif-quantite') Quantité
-            input.form-control(type='text', id='objectif-quantite', name='objectif-quantite', placeholder='Quantité')
+            input.form-control(type='text', id='objectif-quantite', name='objectif-quantite', placeholder='Quantité', required)
           | &nbsp;
           button.btn.btn-danger(data-role='remove')
             span.glyphicon.glyphicon-remove
           button.btn.btn-success(data-role='add')
             span.glyphicon.glyphicon-plus
+
+    .form-group
+      label(for='Nressources') Limite de ressources prises par un joueur en un coup
+      input.form-control(type='text', id='Nressources', name='Nressources', placeholder='10', required)
+
+    .form-group
+      label Adresse IP/port du coordinateur
+      .form-inline
+        .form-group
+          .sr-only(for='coordinateurcoordinateur-ip') Adresse IP
+          input.form-control(type='text', id='coordinateur-ip', name='coordinateur-ip', placeholder='Adresse IP', required)
+        | &nbsp;
+        .form-group
+          .sr-only(for='coordinateur-port') Port
+          input.form-control(type='text', id='coordinateur-port', name='coordinateur-port', placeholder='Port', required)
 
     hr
     h3 Paramétrage des joueurs
@@ -47,11 +58,11 @@ block content
         .form-inline
           .form-group
             .sr-only(for='joueur-ip') Adresse IP
-            input.form-control(type='text', id='joueur-ip', name='joueur-ip', placeholder='Adresse IP')
+            input.form-control(type='text', id='joueur-ip', name='joueur-ip', placeholder='Adresse IP', required)
           | &nbsp;
           .form-group
             .sr-only(for='joueur-port') Port
-            input.form-control(type='text', id='joueur-port', name='joueur-port', placeholder='Port')
+            input.form-control(type='text', id='joueur-port', name='joueur-port', placeholder='Port', required)
           | &nbsp;
           select(name='joueur-strategie')
             option(disabled, selected) Stratégie
@@ -72,19 +83,19 @@ block content
         .form-inline
           .form-group
             .sr-only(for='producteur-ip') Adresse IP
-            input.form-control(type='text', id='producteur-ip', name='producteur-ip', placeholder='Adresse IP')
+            input.form-control(type='text', id='producteur-ip', name='producteur-ip', placeholder='Adresse IP', required)
           | &nbsp;
           .form-group
             .sr-only(for='producteur-port') Port
-            input.form-control(type='text', id='producteur-port', name='producteur-port', placeholder='Port')
+            input.form-control(type='text', id='producteur-port', name='producteur-port', placeholder='Port', required)
           | &nbsp;
           .form-group
             .sr-only(for='producteur-ressource-produite') Ressource produite
-            input.form-control(type='text', id='producteur-ressource-produite', name='producteur-ressource-produite', placeholder='Ressource produite')
+            input.form-control(type='text', id='producteur-ressource-produite', name='producteur-ressource-produite', placeholder='Ressource produite', required)
           | &nbsp;
           .form-group
             .sr-only(for='producteur-quantite-produite') Quantité produite
-            input.form-control(type='text', id='producteur-quantite-produite', name='producteur-quantite-produite', placeholder='Quantité produite')
+            input.form-control(type='text', id='producteur-quantite-produite', name='producteur-quantite-produite', placeholder='Quantité produite', required)
           | &nbsp;
           button.btn.btn-danger(data-role='remove')
             span.glyphicon.glyphicon-remove
