@@ -6,7 +6,7 @@ module.exports = {
   vol: function(ressourceVolee, quantiteVolee){
 
     // si on a pas le droit de voler, on s'arrête
-    if(!voler)
+    if(!regles.voler)
       return 0;
 
     for(var i = 0; i < ressources.length; i++)
