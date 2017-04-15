@@ -13,7 +13,6 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Préparation du jeu 1/2 - Paramétrage des règles et des agents' });
 });
 
-
 // Enregistrement des règles et des agents
 router.post('/regles', function(req, res, next) {
 

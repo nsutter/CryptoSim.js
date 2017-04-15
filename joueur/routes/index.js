@@ -5,7 +5,7 @@ var router = express.Router();
 var joueur = require('../private/joueur');
 
 // rempli lors du lancement
-var coordinateur; // triplet IP/port/adresse complète
+var coordinateur; // couple IP/port
 
 // rempli lors de l'inscription au coordinateur
 var regles; // JSON avec les règles
@@ -25,8 +25,8 @@ request(coordinateur.adresse + '/inscription/joueur', function (err, res, body) 
 });
 
 // rempli lors du lancement de la partie
-var clients; // liste de triplet IP/port/adresse complète
-var producteurs; // liste de triplet IP/port/adresse complète
+var clients; // liste de couple IP/port
+var producteurs; // liste de couple IP/port
 
 // lancement de la partie
 router.post('/start', function(req, res, next) {
@@ -34,10 +34,10 @@ router.post('/start', function(req, res, next) {
 
 // se faire observer
 router.get('/observer', function(req, res, next) {
-  // if(observer)
+  // if(regles.observer)
 });
 
-// se faire voler la ressource :ressourceVolee
+// se faire voler la ressource :ressourceVolee en quantité :quantitéVolee
 router.get('/voler/:ressourceVolee/:quantiteVolee', function(req, res, next) {
 
   var quantiteVolee = joueur.vol(req.params.ressource, req.params.quantiteVolee);

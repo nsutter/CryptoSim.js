@@ -5,7 +5,8 @@ block content
 
   form(action='/regles', method='post')
 
-    h3 Paramétrages des règles
+    hr
+    h3 Paramétrage des règles
 
     .form-group
       label(for='Nressources') Limite de ressources prises par un joueur en un coup
@@ -36,8 +37,60 @@ block content
             span.glyphicon.glyphicon-remove
           button.btn.btn-success(data-role='add')
             span.glyphicon.glyphicon-plus
-    h3 Paramétrages des joueurs
 
-    h3 Paramétrages des producteurs
+    hr
+    h3 Paramétrage des joueurs
 
-    button.btn.btn-success(type='submit') OK !
+    .form-group
+      label Liste des joueurs
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='joueur-ip') Adresse IP
+            input.form-control(type='text', id='joueur-ip', name='joueur-ip', placeholder='Adresse IP')
+          | &nbsp;
+          .form-group
+            .sr-only(for='joueur-port') Port
+            input.form-control(type='text', id='joueur-port', name='joueur-port', placeholder='Port')
+          | &nbsp;
+          select(name='joueur-strategie')
+            option(disabled, selected) Stratégie
+            option Mec de gauche
+            option Mec de droite
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+
+    hr
+    h3 Paramétrage des producteurs
+
+    .form-group
+      label Liste des producteurs
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='producteur-ip') Adresse IP
+            input.form-control(type='text', id='producteur-ip', name='producteur-ip', placeholder='Adresse IP')
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur-port') Port
+            input.form-control(type='text', id='producteur-port', name='producteur-port', placeholder='Port')
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur-ressource-produite') Ressource produite
+            input.form-control(type='text', id='producteur-ressource-produite', name='producteur-ressource-produite', placeholder='Ressource produite')
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur-quantite-produite') Quantité produite
+            input.form-control(type='text', id='producteur-quantite-produite', name='producteur-quantite-produite', placeholder='Quantité produite')
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+      .help-block La quantité produite se compte en unité par seconde.
+
+    hr
+    button.btn.btn-success.center-block(type='submit') OK !

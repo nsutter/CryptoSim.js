@@ -22,3 +22,7 @@ a {
 [data-role="dynamic-fields"] > .form-inline:last-child [data-role="remove"] {
     display: none;
 }
+
+hr {
+  border: 1px solid !important;
+}
