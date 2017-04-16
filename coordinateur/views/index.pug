@@ -2,4 +2,106 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+
+  form(action='/regles', method='post')
+
+    hr
+    h3 Paramétrage des règles
+
+    .checkbox
+      label
+        input(type='checkbox', name='voler')
+        | Les joueurs peuvent voler les autres joueurs
+    .checkbox
+      label
+        input(type='checkbox', name='observer')
+        | Les joueurs peuvent observer les autres joueurs et les producteurs
+
+    .form-group
+      label Objectifs de ressources à atteindre pour gagner la partie
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='objectif_nom') Nom
+            input.form-control(type='text', id='objectif_nom', name='objectif_nom', placeholder='Nom', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='objectif_quantite') Quantité
+            input.form-control(type='text', id='objectif_quantite', name='objectif_quantite', placeholder='Quantité', required)
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+
+    .form-group
+      label(for='Nressources') Limite de ressources prises par un joueur en un coup
+      input.form-control(type='text', id='Nressources', name='Nressources', placeholder='10', required)
+
+    .form-group
+      label Adresse IP/port du coordinateur
+      .form-inline
+        .form-group
+          .sr-only(for='coordinateur_ip') Adresse IP
+          input.form-control(type='text', id='coordinateur_ip', name='coordinateur_ip', placeholder='Adresse IP', required)
+        | &nbsp;
+        .form-group
+          .sr-only(for='coordinateur_port') Port
+          input.form-control(type='text', id='coordinateur_port', name='coordinateur_port', placeholder='Port', required)
+
+    hr
+    h3 Paramétrage des joueurs
+
+    .form-group
+      label Liste des joueurs
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='joueur_ip') Adresse IP
+            input.form-control(type='text', id='joueur_ip', name='joueur_ip', placeholder='Adresse IP', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='joueur_port') Port
+            input.form-control(type='text', id='joueur_port', name='joueur_port', placeholder='Port', required)
+          | &nbsp;
+          select(name='joueur-strategie')
+            option(disabled, selected) Stratégie
+            option Mec de gauche
+            option Mec de droite
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+
+    hr
+    h3 Paramétrage des producteurs
+
+    .form-group
+      label Liste des producteurs
+      div(data-role='dynamic-fields')
+        .form-inline
+          .form-group
+            .sr-only(for='producteur_ip') Adresse IP
+            input.form-control(type='text', id='producteur_ip', name='producteur_ip', placeholder='Adresse IP', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_port') Port
+            input.form-control(type='text', id='producteur_port', name='producteur_port', placeholder='Port', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_ressource_produite') Ressource produite
+            input.form-control(type='text', id='producteur_ressource_produite', name='producteur_ressource_produite', placeholder='Ressource produite', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_quantite_produite') Quantité produite
+            input.form-control(type='text', id='producteur_quantite_produite', name='producteur_quantite_produite', placeholder='Quantité produite', required)
+          | &nbsp;
+          button.btn.btn-danger(data-role='remove')
+            span.glyphicon.glyphicon-remove
+          button.btn.btn-success(data-role='add')
+            span.glyphicon.glyphicon-plus
+      .help-block La quantité produite se compte en unité par seconde.
+
+    hr
+    button.btn.btn-success.center-block(type='submit') OK !
