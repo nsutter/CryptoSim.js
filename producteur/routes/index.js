@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+module.exports = router;
+
 var ressource;
 var nombre;
 var delay= 300;
+var serveur= "192.168.1.1:3000"
 
 function update()
 {
@@ -37,5 +40,3 @@ router.get('/get_ressource/:nb', function(req, res, next){
     nombre= 0;
   }
 });
-
-module.exports = router;
