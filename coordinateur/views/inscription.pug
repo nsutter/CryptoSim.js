@@ -1,0 +1,52 @@
+extends layout
+
+block content
+  h1= title
+
+    h2 Joueurs
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Stratégie
+      - var i = 0
+      while i < regles.joueurs.length
+        if regles.joueurs[i].inscription
+          tr.success
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td #{regles.joueurs[i].strategie}
+        else
+          tr.danger
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td /
+
+        - i = i + 1
+
+    h2 Producteurs
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Ressource
+        th Quantité initiale
+        th Quantité produite
+      - var i = 0
+      while i < regles.producteurs.length
+        if regles.producteurs[i].inscription
+          tr.success
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td #{regles.producteurs[i].ressource}
+            td #{regles.producteurs[i].quantite}
+            td #{regles.producteurs[i].quantite_produite}
+        else
+          tr.danger
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td /
+            td /
+            td /
+
+        - i = i + 1

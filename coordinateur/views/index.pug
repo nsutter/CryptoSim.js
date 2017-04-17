@@ -60,6 +60,9 @@ block content
 
     .form-group
       label Liste des joueurs
+      p.form-control-static
+        span.glyphicon.glyphicon-exclamation-sign
+        | &nbsp;Les sites (adresse IP/port) sont associés dynamiquement à leur paramètre (stratégie) lors de l'inscription. Ce formulaire ne garantit donc pas la répartition des sites et des paramètres.
       div(data-role='dynamic-fields')
         .form-inline
           .form-group
@@ -85,6 +88,9 @@ block content
 
     .form-group
       label Liste des producteurs
+      p.form-control-static
+        span.glyphicon.glyphicon-exclamation-sign
+        | &nbsp;Les sites (adresse IP/port) sont associés dynamiquement à leurs paramètres (ressource produite, quantité initiale, quantité produite) lors de l'inscription. Ce formulaire ne garantit donc pas la répartition des sites et des paramètres.
       div(data-role='dynamic-fields')
         .form-inline
           .form-group

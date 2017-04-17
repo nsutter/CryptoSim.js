@@ -1,3 +1,4 @@
+// rempli automatiquement un exemple de paramétrage avec 1 objectif, 1 joueur et 1 producteur
 function exemple1()
 {
   $('[name="voler"]').prop('checked', true);
@@ -21,6 +22,7 @@ function exemple1()
   $('[name="producteur_quantite_produite"]').val(5);
 }
 
+// rempli automatiquement un exemple de paramétrage avec 2 objectifs, 2 joueurs et 2 producteurs
 function exemple2()
 {
   $('[data-role="add"]').click();
