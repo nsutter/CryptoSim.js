@@ -38,11 +38,17 @@ router.post('/regles', function(req, res, next) {
   // array objectif
   regles.objectif = [];
 
-  // ---------------------------------------------------------------------
-  // si c'est un Array, on fait ça, si c'est un String, on en ajoute qu'un
-  for(var i = 0; i < req.body.objectif_nom.length; i++)
+  // si c'est un Array, on utilise la boucle, si c'est un String, on ajoute directement l'élément
+  if(req.body.objectif_nom.constructor === Array)
   {
-    regles.objectif.push({nom: req.body.objectif_nom[i], quantite: req.body.objectif_quantite[i]});
+    for(var i = 0; i < req.body.objectif_nom.length; i++)
+    {
+      regles.objectif.push({nom: req.body.objectif_nom[i], quantite: req.body.objectif_quantite[i]});
+    }
+  }
+  else
+  {
+    regles.objectif.push({nom: req.body.objectif_nom, quantite: req.body.objectif_quantite});
   }
 
   // int Nressources
@@ -54,17 +60,30 @@ router.post('/regles', function(req, res, next) {
   // array liste des joueurs
   regles.joueurs = [];
 
-  for(var i = 0; i < req.body.joueur_ip.length; i++)
+  if(req.body.joueur_ip.constructor === Array)
   {
-    regles.joueurs.push({ip: req.body.joueur_ip[i], port: req.body.joueur_port[i], strategie: req.body.joueur_strategie[i], inscription: false});
+    for(var i = 0; i < req.body.joueur_ip.length; i++)
+    {
+      regles.joueurs.push({ip: req.body.joueur_ip[i], port: req.body.joueur_port[i], strategie: req.body.joueur_strategie[i], inscription: false});
+    }
+  }
+  else
+  {
+    regles.joueurs.push({ip: req.body.joueur_ip, port: req.body.joueur_port, strategie: req.body.joueur_strategie, inscription: false});
   }
 
   // array liste des producteurs
   regles.producteurs = [];
-
-  for(var i = 0; i < req.body.producteur_ip.length; i++)
+  if(req.body.producteur_ip.constructor === Array)
   {
-    regles.producteurs.push({ip: req.body.producteur_ip[i], port: req.body.producteur_port[i], ressource: req.body.producteur_ressource_produite[i], quantite: req.body.producteur_quantite_initiale[i], quantite_produite : req.body.producteur_quantite_produite[i], inscription: false});
+    for(var i = 0; i < req.body.producteur_ip.length; i++)
+    {
+      regles.producteurs.push({ip: req.body.producteur_ip[i], port: req.body.producteur_port[i], ressource: req.body.producteur_ressource_produite[i], quantite: req.body.producteur_quantite_initiale[i], quantite_produite : req.body.producteur_quantite_produite[i], inscription: false});
+    }
+  }
+  else
+  {
+    regles.producteurs.push({ip: req.body.producteur_ip, port: req.body.producteur_port, ressource: req.body.producteur_ressource_produite, quantite: req.body.producteur_quantite_initiale, quantite_produite : req.body.producteur_quantite_produite, inscription: false});
   }
 
   console.log(regles);
