@@ -2,9 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 /*
-etat = 0 -> rien
 etat = 1 -> regles OK
-etat = 2 -> regles OK, ..
+etat = 2 -> regles OK, inscriptions OK
 */
 var etat = 0;
 
@@ -57,7 +56,7 @@ router.post('/regles', function(req, res, next) {
 
   for(var i = 0; i < req.body.joueur_ip.length; i++)
   {
-    regles.joueurs.push({ip: req.body.joueur_ip[i], port: req.body.joueur_port[i], strategie: req.body.joueur_strategie});
+    regles.joueurs.push({ip: req.body.joueur_ip[i], port: req.body.joueur_port[i], strategie: req.body.joueur_strategie[i], inscription: false});
   }
 
   // array liste des producteurs
@@ -65,17 +64,16 @@ router.post('/regles', function(req, res, next) {
 
   for(var i = 0; i < req.body.producteur_ip.length; i++)
   {
-    regles.producteurs.push({ip: req.body.producteur_ip[i], port: req.body.producteur_port[i], ressource: req.body.producteur_ressource_produite[i], quantite: req.body.producteur_quantite_produite[i]});
+    regles.producteurs.push({ip: req.body.producteur_ip[i], port: req.body.producteur_port[i], ressource: req.body.producteur_ressource_produite[i], quantite: req.body.producteur_quantite_initiale[i], quantite_produite : req.body.producteur_quantite_produite[i], inscription: false});
   }
 
   console.log(regles);
 
-  // enregistrer les règles
   etat = 1;
 
   // lancer les agents
 
-  res.redirect('/');
+  res.redirect('/inscription');
 });
 
 

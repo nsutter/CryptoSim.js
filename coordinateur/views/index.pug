@@ -3,6 +3,12 @@ extends layout
 block content
   h1= title
 
+  button.btn.btn-info(onclick='exemple1();') Exemple 1 (1o/1j/1p)
+  | &nbsp;
+  button.btn.btn-info(onclick='exemple2();') Exemple 2 (2o/2j/2p)
+  | &nbsp;
+  button.btn.btn-info(onclick='window.location.reload(true);') Remise à zéro
+
   form(action='/regles', method='post')
 
     hr
@@ -64,7 +70,7 @@ block content
             .sr-only(for='joueur_port') Port
             input.form-control(type='text', id='joueur_port', name='joueur_port', placeholder='Port', required)
           | &nbsp;
-          select(name='joueur-strategie')
+          select(name='joueur_strategie')
             option(disabled, selected) Stratégie
             option Mec de gauche
             option Mec de droite
@@ -92,6 +98,10 @@ block content
           .form-group
             .sr-only(for='producteur_ressource_produite') Ressource produite
             input.form-control(type='text', id='producteur_ressource_produite', name='producteur_ressource_produite', placeholder='Ressource produite', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_quantite_initiale') Quantité initiale
+            input.form-control(type='text', id='producteur_quantite_initiale', name='producteur_quantite_initiale', placeholder='Quantité initiale', required)
           | &nbsp;
           .form-group
             .sr-only(for='producteur_quantite_produite') Quantité produite
