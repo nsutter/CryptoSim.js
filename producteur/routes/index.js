@@ -3,15 +3,15 @@ var router = express.Router();
 
 module.exports = router;
 
-var ressource;
-var nombre;
+// faire une requete get au debut vers /producteur/inscription
+
 var delay= 1000;
-var serveur= "192.168.1.1:3000"
+var serveur= "localhost:4000"
 
 function update()
 {
-  nombre = nombre+1;
-  console.log(nombre);
+  param.quantite = param.quantite + param.quantite_produit;
+  console.log(param.quantite);
   setTimeout(update, delay);
 }
 
@@ -22,24 +22,22 @@ router.get('/', function(req, res, next) {
 
 // lancement de la partie
 router.get('/start', function(req, res, next){
-  nombre= 0;
-  ressource= "ethereum";
   setTimeout(update, delay);
 });
 
-//connaitre le type de ressource et le nombre que le producteur possède
+//connaitre le type de ressource et le param.quantite que le producteur possède
 router.get('/show_ressource', function(req, res, next){
-  res.send(ressource + ": " + nombre);
+  res.send(param.ressource + ": " + param.quantite);
 });
 
 //prendre une ressource
 router.get('/get_ressource/:nb', function(req, res, next){
-  if(parseInt(req.params.nb) <= nombre){
-    nombre= nombre - parseInt(req.params.nb);
+  if(parseInt(req.params.nb) <= param.quantite){
+    param.quantite= param.quantite - parseInt(req.params.nb);
     res.send(req.params.nb);
   }
   else {
-    res.send(nombre);
-    nombre= 0;
+    res.send(param.quantite);
+    param.quantite= 0;
   }
 });

@@ -7,6 +7,12 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 
+var param;
+
+request("localhost:4000/", body {
+  param = JSON.parse(body);
+});
+
 var app = express();
 
 // view engine setup
