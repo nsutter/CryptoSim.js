@@ -1,29 +1,40 @@
 var express = require('express');
+var request = require('request');
 var router = express.Router();
 
 module.exports = router;
 
-// faire une requete get au debut vers /producteur/inscription
+var param= {};
+
+request("localhost:4000/producteur/inscription", function (error, reponse, body) {
+  if(reponse){
+    param = JSON.parse(body);
+  }
+  else {
+    param.quantite = parseInt(10);
+    param.delay= parseInt(1000);
+    param.ressource= "ETH";
+    param.quantite_produit= parseInt(1);
+  }
+});
 
 var serveur= "localhost:4000"
-
 var quantite= param.quantite;
 
 function update()
 {
   if(param.proportionnel) {
-    quantite = quantite + quantite/2 + 1;
+    quantite = parseInt(quantite + quantite/2 + 1);
   }
   else {
-    quantite = quantite + quantite_produit;
+    quantite = quantite + parseInt(param.quantite_produit);
   }
   console.log(quantite);
-  setTimeout(update, param.delay);
 }
 
 // lancement de la partie
 router.get('/start', function(req, res, next){
-  setTimeout(update, param.delay);
+  setInterval(update, param.delay);
 });
 
 //connaitre le type de ressource et le quantite que le producteur possède

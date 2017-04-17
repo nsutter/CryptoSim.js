@@ -4,14 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var request = require('request');
 
 var index = require('./routes/index');
-
-var param;
-
-request("localhost:4000/", body {
-  param = JSON.parse(body);
-});
 
 var app = express();
 
