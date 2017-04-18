@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+var coordinateur = require('../private/coordinateur');
 /*
 etat = 1 -> regles OK
 etat = 2 -> regles OK, inscriptions OK
@@ -112,11 +113,21 @@ router.post('/regles', function(req, res, next) {
 
 // Inscription des agents
 router.get('/inscription', function(req, res, next) {
-  console.log(regles);
-
   if(etat == 1) // phase d'inscription - OK
   {
-    res.render('inscription', {title: 'Préparation du jeu 2/2 - Inscription des agents', regles: regles});
+    var nJoueurs = 0, nProducteurs = 0;
+
+    for(var i = 0; i < regles.joueurs.length; i++)
+    {
+      if(!regles.joueurs[i].inscription)
+        nJoueurs++;
+    }
+    for(var i = 0; i < regles.producteurs.length; i++)
+    {
+      if(!regles.producteurs[i].inscription)
+        nProducteurs++;
+    }
+    res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs});
   }
   else if(etat == 0) // phase de paramétrage
   {
@@ -144,6 +155,25 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
 
         // on envoie les paramètres
         res.send(regles.producteurs[i]);
+
+        var nAgents = 0;
+
+        for(var i = 0; i < regles.joueurs.length; i++)
+        {
+          if(!regles.joueurs[i].inscription)
+            nAgents++;
+        }
+        for(var i = 0; i < regles.producteurs.length; i++)
+        {
+          if(!regles.producteurs[i].inscription)
+            nAgents++;
+        }
+
+        if(nAgents == 0) // toutes les inscriptions ont été effectuées
+        {
+          regles.dateDebut = new Date();
+          coordinateur.start();
+        }
       }
     }
 
@@ -160,7 +190,51 @@ router.get('/producteur/telechargement', function(req, res, next) {
 });
 
 router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
+  if(regles.joueursParametres.length > 0)
+  {
+    for(var i = 0; i < regles.joueurs.length; i++)
+    {
+      if(regles.joueurs[i].ip == req.params.ip && regles.joueurs[i].port == req.params.port)
+      {
+        // on copie les 1ers paramètres en attente
+        regles.joueurs[i].strategie = regles.joueursParametres[0].strategie;
 
+        // on supprime les paramètres copiés
+        regles.joueursParametres.splice(0, 1);
+
+        // on valide l'inscription
+        regles.joueurs[i].inscription = true;
+
+        // on envoie les paramètres
+        res.send(regles.joueurs[i]);
+
+        var nAgents = 0;
+
+        for(var i = 0; i < regles.joueurs.length; i++)
+        {
+          if(!regles.joueurs[i].inscription)
+            nAgents++;
+        }
+        for(var i = 0; i < regles.producteurs.length; i++)
+        {
+          if(!regles.producteurs[i].inscription)
+            nAgents++;
+        }
+
+        if(nAgents == 0) // toutes les inscriptions ont été effectuées
+        {
+          regles.dateDebut = new Date();
+          coordinateur.start();
+        }
+      }
+    }
+
+    // res.send(ERR)
+  }
+  else // toutes les inscriptions ont été effectués
+  {
+    // res.send(ERR);
+  }
 });
 
 router.get('/producteur/telechargement', function(req, res, next) {
