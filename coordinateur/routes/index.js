@@ -136,7 +136,7 @@ router.get('/inscription', function(req, res, next) {
 });
 
 router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
-  if(regles.producteursParametres.length > 0)
+  if(regles.producteursParametres && regles.producteursParametres.length > 0)
   {
     for(var i = 0; i < regles.producteurs.length; i++)
     {
@@ -177,20 +177,16 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
       }
     }
 
-    // res.send(ERR)
+    res.send({}); // objet vide = erreur côté joueur
   }
-  else // toutes les inscriptions ont été effectués
+  else // toutes les inscriptions ont été effectués OU les inscriptions n'ont pas commencées
   {
-    // res.send(ERR);
+    res.send({}); // objet vide = erreur côté joueur
   }
-});
-
-router.get('/producteur/telechargement', function(req, res, next) {
-  // TODO
 });
 
 router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
-  if(regles.joueursParametres.length > 0)
+  if(regles.joueursParametres && regles.joueursParametres.length > 0)
   {
     for(var i = 0; i < regles.joueurs.length; i++)
     {
@@ -229,15 +225,12 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
       }
     }
 
-    // res.send(ERR)
+    res.send({}); // objet vide = erreur côté joueur
   }
-  else // toutes les inscriptions ont été effectués
+  else // toutes les inscriptions ont été effectués OU les inscriptions n'ont pas commencées
   {
-    // res.send(ERR);
+    res.send({}); // objet vide = erreur côté joueur
   }
 });
 
-router.get('/producteur/telechargement', function(req, res, next) {
-  // TODO
-});
 module.exports = router;

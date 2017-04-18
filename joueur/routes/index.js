@@ -12,13 +12,17 @@ var agents = {};
 request('http://localhost:1337/joueur/inscription/localhost/2001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);
+
+    if(!param.ip) // inscription impossible
+    {
+      process.exit(1);
+    }
+
     console.log('Téléchargement des paramètres...')
     console.log(param);
   }
   else { // par défaut
-    param.ressource = "Ether";
-    param.quantite = 0;
-    param.quantite_produite = 5;
+    param.strategie = 'Mec de gauche';
   }
 });
 

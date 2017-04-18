@@ -11,6 +11,12 @@ var param = {};
 request('http://localhost:1337/producteur/inscription/localhost/3001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);
+
+    if(!param.ip) // inscription impossible
+    {
+      process.exit(1);
+    }
+
     console.log('Téléchargement des paramètres...')
     console.log(param);
   }
