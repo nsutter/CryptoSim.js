@@ -3,8 +3,9 @@ var router = express.Router();
 
 var coordinateur = require('../private/coordinateur');
 /*
-etat = 1 -> regles OK
-etat = 2 -> regles OK, inscriptions OK
+etat = 0 -> phase de paramétrage
+etat = 1 -> phase de d'inscription
+etat = 2 -> phase de fin
 */
 var etat = 0;
 
@@ -19,6 +20,10 @@ router.get('/', function(req, res, next) {
   else if(etat == 1) // phase d'inscription
   {
     res.redirect('/inscription');
+  }
+  else if(etat == 2) // phase de fin
+  {
+    res.redirect('/fin');
   }
 });
 
@@ -133,6 +138,10 @@ router.get('/inscription', function(req, res, next) {
   {
     res.redirect('/');
   }
+  else if(etat == 2) // phase de fin
+  {
+    res.redirect('/fin');
+  }
 });
 
 router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
@@ -235,7 +244,18 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
 
 // Fin de partie (affichage des scores, des graphiques, ...)
 router.get('/fin', function(req, res, next) {
-  res.render('fin', {title: 'Fin du jeu'});
+  if(etat == 2) // phase de fin - OK
+  {
+    res.render('fin', {title: 'Fin du jeu'});
+  }
+  else if(etat == 0) // phase de paramètrage
+  {
+    res.redirect('/');
+  }
+  else if(etat == 1) // phase d'inscription
+  {
+    res.redirect('/inscription');
+  }
 });
 
 // Remise à zéro de l'état et des règles et retour au paramétrage des règles et des agents
