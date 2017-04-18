@@ -4,52 +4,57 @@ var router = express.Router();
 
 module.exports = router;
 
-var param= {};
+var param = {};
 
-request("localhost:4000/producteur/inscription", function (error, reponse, body) {
-  if(reponse){
+// récupération de paramètres du producteur
+// TODO : adresse de l'agent et du producteur dynamique (lancé avec le script)
+request('http://localhost:1337/producteur/inscription/localhost/3001', function (error, response, body) {
+  if(response){
     param = JSON.parse(body);
+    console.log('Téléchargement des paramètres...')
+    console.log(param);
   }
-  else {
-    param.quantite = parseInt(10);
-    param.delay= parseInt(1000);
-    param.ressource= "ETH";
-    param.quantite_produit= parseInt(1);
+  else { // par défaut
+    param.ressource = "Ether";
+    param.quantite = 0;
+    param.quantite_produite = 5;
   }
 });
 
-var serveur= "localhost:4000"
-var quantite= param.quantite;
+var serveur = "localhost:1337"
+var quantite = param.quantite;
 
 function update()
 {
+  // TODO : implémenter param.proportionnel côté coordinateur
   if(param.proportionnel) {
-    quantite = parseInt(quantite + quantite/2 + 1);
+    param.quantite = parseInt(param.quantite) + parseInt(param.quantite)/2 + 1;
   }
   else {
-    quantite = quantite + parseInt(param.quantite_produit);
+    param.quantite = parseInt(param.quantite) + parseInt(param.quantite_produite);
   }
-  console.log(quantite);
+  console.log(new Date() + ' : ' + param.quantite + ' ' + param.ressource + '(s)');
 }
 
 // lancement de la partie
-router.get('/start', function(req, res, next){
-  setInterval(update, param.delay);
+router.post('/start', function(req, res, next){
+  console.log('\nDémarrage de la production...')
+  setInterval(update, 1000); // chaque seconde
 });
 
-//connaitre le type de ressource et le quantite que le producteur possède
+// connaître le type de ressource et la quantité que le producteur possède
 router.get('/show_ressource', function(req, res, next){
-  res.send(param.ressource + ": " + quantite);
+  res.send({nom: param.ressource, quantite: param.quantite}); // envoi du nom et de la quantité de la ressource produite
 });
 
-//prendre une ressource
+// prendre une ressource
 router.get('/get_ressource/:nb', function(req, res, next){
-  if(parseInt(req.params.nb) <= quantite){
-    quantite= quantite - parseInt(req.params.nb);
-    res.send(req.params.nb);
+  if(req.params.nb <= parseInt(param.quantite)){ // vérification de la quantité disponible
+    param.quantite = parseInt(param.quantite) - req.params.nb;
+    res.send(req.params.nb); // envoi du nombre brut
   }
   else {
-    res.send(quantite);
-    quantite= 0;
+    res.send(param.quantite); // envoi du nombre brut
+    quantite = 0;
   }
 });

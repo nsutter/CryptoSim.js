@@ -172,7 +172,7 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
         if(nAgents == 0) // toutes les inscriptions ont été effectuées
         {
           regles.dateDebut = new Date();
-          coordinateur.start();
+          coordinateur.start(regles);
         }
       }
     }
@@ -224,7 +224,7 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
         if(nAgents == 0) // toutes les inscriptions ont été effectuées
         {
           regles.dateDebut = new Date();
-          coordinateur.start();
+          coordinateur.start(regles);
         }
       }
     }
