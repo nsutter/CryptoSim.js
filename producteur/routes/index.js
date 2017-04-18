@@ -40,6 +40,7 @@ function update()
 router.post('/start', function(req, res, next){
   console.log('\nDémarrage de la production...')
   setInterval(update, 1000); // chaque seconde
+  res.end();
 });
 
 // connaître le type de ressource et la quantité que le producteur possède

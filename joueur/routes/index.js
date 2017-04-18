@@ -5,6 +5,7 @@ var router = express.Router();
 var joueur = require('../private/joueur');
 
 var param = {};
+var agents = {};
 
 // récupération de paramètres du joueur
 // TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
@@ -27,6 +28,12 @@ var producteurs; // liste de couple IP/port
 
 // lancement de la partie
 router.post('/start', function(req, res, next) {
+  console.log('Récupération des autres agents...');
+  agents = JSON.parse(req.body.agents)
+  console.log(agents);
+  console.log('Démarrage du joueur...');
+  // TODO : le joueur avec ses actions
+  res.end();
 });
 
 // se faire observer
