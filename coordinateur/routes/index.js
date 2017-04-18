@@ -233,4 +233,16 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
   }
 });
 
+// Fin de partie (affichage des scores, des graphiques, ...)
+router.get('/fin', function(req, res, next) {
+  res.render('fin', {title: 'Fin du jeu'});
+});
+
+// Remise à zéro de l'état et des règles et retour au paramétrage des règles et des agents
+router.get('/annulation', function(req, res, next) {
+  regles = {};
+  etat = 0;
+  res.redirect('/');
+});
+
 module.exports = router;

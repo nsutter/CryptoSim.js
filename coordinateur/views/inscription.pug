@@ -5,10 +5,14 @@ block content
 
   if(regles.dateDebut)
     h1 En cours d'exécution...
+      | &nbsp;
+      a.btn.btn-info(href='/fin') Arrêter la partie
     span.glyphicon.glyphicon-time
     | &nbsp;Date de début : #{regles.dateDebut}
   else
     h1 Préparation du jeu 2/2 - Inscription des agents
+      | &nbsp;
+      a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
 
   h2 #{nJoueurs} joueur(s) en attente
   table.table.table-bordered
