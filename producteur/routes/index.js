@@ -7,7 +7,7 @@ module.exports = router;
 var param = {};
 
 // récupération de paramètres du producteur
-// TODO : adresse de l'agent et du producteur dynamique (lancé avec le script)
+// TODO : adresse du coordinateur et du producteur dynamique (lancé avec le script)
 request('http://localhost:1337/producteur/inscription/localhost/3001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);

@@ -12,6 +12,8 @@ module.exports = {
       });
     */
 
+    var agents = []; // array des agents concurrents avec le minimum d'informations possibles
+
     // démarrage des producteurs
     for(var i = 0; i < regles.producteurs.length; i++)
     {
@@ -28,7 +30,7 @@ module.exports = {
     // démarrage des joueurs
     for(var i = 0; i < regles.joueurs.length; i++)
     {
-      request('http://' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '/start', function (err2, res2, body2) {
+      request.post('http://' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '/start', {form: agents}, function (err2, res2, body2) {
         if(err2)
           console.log(err2)
         if(!err2)

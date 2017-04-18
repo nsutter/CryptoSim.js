@@ -4,23 +4,20 @@ var router = express.Router();
 
 var joueur = require('../private/joueur');
 
-// rempli lors du lancement
-var coordinateur; // couple IP/port
+var param = {};
 
-// rempli lors de l'inscription au coordinateur
-var regles; // JSON avec les règles
-var ressources; // JSON avec ressources courantes et ressources voulues
-
-// TODO : recommencer cette requête si elle échoue
-request(coordinateur.adresse + '/inscription/joueur', function (err, res, body) {
-  console.log('error:', error);
-  console.log('statusCode:', response && response.statusCode);
-  console.log('body:', body);
-
-  if(body.success)
-  {
-    regles = body.regles;
-    ressources = body.ressources;
+// récupération de paramètres du joueur
+// TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
+request('http://localhost:1337/joueur/inscription/localhost/2001', function (error, response, body) {
+  if(response){
+    param = JSON.parse(body);
+    console.log('Téléchargement des paramètres...')
+    console.log(param);
+  }
+  else { // par défaut
+    param.ressource = "Ether";
+    param.quantite = 0;
+    param.quantite_produite = 5;
   }
 });
 
