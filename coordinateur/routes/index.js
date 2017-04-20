@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var SSH = require('simple-ssh');
+
 
 var coordinateur = require('../private/coordinateur');
 /*
@@ -10,6 +12,53 @@ etat = 2 -> phase de fin
 var etat = 0;
 
 var regles = {};
+
+function lance_ssh(var ip, var username, var port, var pass, var producteur){
+  new ssh= new SSH({
+    host: ip,
+    user: username,
+    pass: pass
+  });
+
+  ssh.exec('git clone git@github.com:nsutter/CryptoSim.js.git', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+  ssh.exec('cd CryptoSim.js', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+  if(producteur == 1){
+    ssh.exec('cd producteur', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+    })
+
+  else {
+    ssh.exec('cd joueur', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+    })
+  }
+
+  ssh.exec('npm install', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+
+  ssh.exec('npm start &', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  }).start();
+  ssh.end();
+}
+
 
 // Paramétrage des règles et des agents
 router.get('/', function(req, res, next) {
