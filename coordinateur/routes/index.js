@@ -13,8 +13,8 @@ var etat = 0;
 
 var regles = {};
 
-function lance_ssh(var ip, var username, var port, var pass, var producteur){
-  new ssh= new SSH({
+function lance_ssh(ip, username, port, pass, producteur){
+  var ssh= new SSH({
     host: ip,
     user: username,
     pass: pass
@@ -36,7 +36,7 @@ function lance_ssh(var ip, var username, var port, var pass, var producteur){
           console.log(stdout);
       }
     })
-
+  }
   else {
     ssh.exec('cd joueur', {
       out: function(stdout) {
