@@ -51,7 +51,7 @@ function lance_ssh(ip, username, port, pass, producteur){
     }
   })
 
-  ssh.exec('npm start &', {
+  ssh.exec('PORT=' + port + ' npm start &', {
     out: function(stdout) {
         console.log(stdout);
     }
@@ -157,7 +157,27 @@ router.post('/regles', function(req, res, next) {
 
   console.log(regles);
 
+  // lance_ssh(ip, username, port, pass, producteur){
+
   // LANCER LES AGENTS EN SSH ICI
+  for(var i=0; i< regles.joueurs.length ; i++)
+  {
+    var client= regles.joueurs[i];
+    if(client.ip != "localhost")
+      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 0)
+    else {
+
+    }
+  }
+  for(var i=0; i< regles.producteur.length ; i++)
+  {
+    var client= regles.producteurs[i];
+    if(client.ip != "localhost")
+      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 1)
+    else {
+
+    }
+  }
 
   etat = 1; // on passe à la phase d'inscription
 
