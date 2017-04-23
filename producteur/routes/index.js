@@ -30,6 +30,7 @@ request('http://localhost:1337/producteur/inscription/localhost/3001', function 
 var serveur = "localhost:1337"
 var quantite = param.quantite;
 
+// parseInt NE SONT PLUS NECESSAIRES car au niveau du coordinateur ? à tester
 function update()
 {
   // TODO : implémenter param.proportionnel côté coordinateur
@@ -55,6 +56,7 @@ router.get('/show_ressource', function(req, res, next){
 });
 
 // prendre une ressource
+// parseInt NE SONT PLUS NECESSAIRES car au niveau du coordinateur ? à tester
 router.get('/get_ressource/:nb', function(req, res, next){
   if(req.params.nb <= parseInt(param.quantite)){ // vérification de la quantité disponible
     param.quantite = parseInt(param.quantite) - req.params.nb;

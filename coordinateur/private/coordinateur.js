@@ -6,12 +6,6 @@ module.exports = {
   */
   start: function(regles){
 
-    /*
-      request.post('adresse', {form: {key: 'value'}}, function(err, res, body){
-
-      });
-    */
-
     var agents = {}; // array des agents concurrents avec le minimum d'informations possibles pour les joueurs
     agents.producteurs = [];
     agents.joueurs = [];

@@ -23,12 +23,11 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
   }
   else { // par défaut
     param.strategie = 'Mec de gauche';
+    param.voler = false;
+    param.observer = false;
+    param.Nressources = 10;
   }
 });
-
-// rempli lors du lancement de la partie
-var clients; // liste de couple IP/port
-var producteurs; // liste de couple IP/port
 
 // lancement de la partie
 router.post('/start', function(req, res, next) {
@@ -48,7 +47,7 @@ router.get('/observer', function(req, res, next) {
 // se faire voler la ressource :ressourceVolee en quantité :quantitéVolee
 router.get('/voler/:ressourceVolee/:quantiteVolee', function(req, res, next) {
 
-  var quantiteVolee = joueur.vol(req.params.ressource, req.params.quantiteVolee);
+  var quantiteVolee = joueur.se_faire_voler(req.params.ressource, req.params.quantiteVolee);
 
   res.json({success: true, quantiteVolee: quantiteVolee});
 });

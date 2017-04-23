@@ -56,19 +56,19 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.objectif_nom.length; i++)
     {
-      regles.objectif.push({nom: req.body.objectif_nom[i], quantite: req.body.objectif_quantite[i]});
+      regles.objectif.push({nom: req.body.objectif_nom[i], quantite: parseInt(req.body.objectif_quantite[i])});
     }
   }
   else
   {
-    regles.objectif.push({nom: req.body.objectif_nom, quantite: req.body.objectif_quantite});
+    regles.objectif.push({nom: req.body.objectif_nom, quantite: parseInt(req.body.objectif_quantite)});
   }
 
   // int Nressources
-  regles.Nressources = req.body.Nressources;
+  regles.Nressources = parseInt(req.body.Nressources);
 
   // object coordinateur
-  regles.coordinateur = {ip: req.body.coordinateur_ip, port: req.body.coordinateur_port};
+  regles.coordinateur = {ip: req.body.coordinateur_ip, port: parseInt(req.body.coordinateur_port)};
 
   // array liste des joueurs (sites)
   regles.joueurs = []; // sites
@@ -78,13 +78,13 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.joueur_ip.length; i++)
     {
-      regles.joueurs.push({ip: req.body.joueur_ip[i], port: req.body.joueur_port[i], inscription: false});
+      regles.joueurs.push({ip: req.body.joueur_ip[i], port: parseInt(req.body.joueur_port[i]), inscription: false});
       regles.joueursParametres.push({strategie: req.body.joueur_strategie[i]})
     }
   }
   else
   {
-    regles.joueurs.push({ip: req.body.joueur_ip, port: req.body.joueur_port, strategie: req.body.joueur_strategie, inscription: false});
+    regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), strategie: req.body.joueur_strategie, inscription: false});
     regles.joueursParametres.push({strategie: req.body.joueur_strategie})
   }
 
@@ -96,14 +96,14 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
-      regles.producteurs.push({ip: req.body.producteur_ip[i], port: req.body.producteur_port[i], inscription: false});
-      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: req.body.producteur_quantite_initiale[i], quantite_produite : req.body.producteur_quantite_produite[i]})
+      regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), inscription: false});
+      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite : parseInt(req.body.producteur_quantite_produite[i])})
     }
   }
   else
   {
-    regles.producteurs.push({ip: req.body.producteur_ip, port: req.body.producteur_port, ressource: req.body.producteur_ressource_produite, quantite: req.body.producteur_quantite_initiale, quantite_produite : req.body.producteur_quantite_produite, inscription: false});
-    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: req.body.producteur_quantite_initiale, quantite_produite : req.body.producteur_quantite_produite})
+    regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite), inscription: false});
+    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)})
   }
 
   console.log(regles);
@@ -162,8 +162,14 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
         // on valide l'inscription
         regles.producteurs[i].inscription = true;
 
+        // on crée un nouvel objet avec les règles
+        var resp = regles.producteurs[i];
+        resp.voler = regles.voler;
+        resp.observer = regles.observer;
+        resp.Nressources = regles.Nressources;
+
         // on envoie les paramètres
-        res.send(regles.producteurs[i]);
+        res.send(resp);
 
         var nAgents = 0;
 
@@ -210,8 +216,21 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
         // on valide l'inscription
         regles.joueurs[i].inscription = true;
 
+        // on crée un nouvel objet avec les règles
+        var resp = regles.joueurs[i];
+        resp.voler = regles.voler;
+        resp.observer = regles.observer;
+        resp.Nressources = regles.Nressources;
+
+        // et les objectifs
+        resp.objectif = []
+        for(var i = 0; i < regles.objectif.length; i++)
+        {
+          resp.objectif.push({nom: regles.objectif[i].nom, quantite: 0, quantite_demandee: parseInt(regles.objectif[i].quantite)})
+        }
+
         // on envoie les paramètres
-        res.send(regles.joueurs[i]);
+        res.send(resp);
 
         var nAgents = 0;
 
