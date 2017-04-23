@@ -1,6 +1,35 @@
 module.exports = {
   /*
+    cible = le couple IP/port de la cible
+    type_cible = producteur/joueur
+    type_observation = ressources/strategie
+    /!\ le traitement de l'observation N'EST PAS effectué dans la fonction, l'observation est renvoyée
+  */
+  observer: function(cible, type_cible, type_observation)
+  {
+    if(!param.observer)
+      return {success: false};
+
+    var adresse;
+
+    // construction de l'adresse
+    if(type_cible == 'joueur' && type_observation == 'strategie') // observation de la stratégie sur  unjoueur
+    {
+      adresse = 'http://' + cible.ip + ':' + cible.port + '/show_strategie';
+    }
+    else // observation de(s) ressource(s) sur un joueur/producteur
+    {
+      adresse = 'http://' + cible.ip + ':' + cible.port + '/show_ressource';
+    }
+
+    // requête
+    request.post(adresse, function(err, res, body){
+      return JSON.parse(body);
+    });
+  },
+  /*
     renvoie la quantité volée de la ressource volée à la cible
+    /!\ le traitement du vol EST effectué dans la fonction
   */
   voler: function(ressourceVolee, quantiteVolee, cible)
   {
@@ -10,7 +39,7 @@ module.exports = {
 
     // construction de l'adresse et requête
     request.post('http://' + cible.ip + ':' + cible.port + '/voler/ ' + ressourceVolee + '/' + quantiteVolee, function(err, res, body){
-      var resulat = JSON.parse(body);
+      var resultat = JSON.parse(body);
 
       if(body.success) // mise à jour des objectifs
       {
