@@ -32,7 +32,7 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
 function update()
 {
   // INTÉGRER ICI UNE IA QUI PREND LE CONTRÔLE DU MONDE
-
+  joueur.verification_stop(param);
   // joueur.observer(param, agents.producteurs[0], 'producteur', 'ressources');
 }
 

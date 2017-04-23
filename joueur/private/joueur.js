@@ -83,5 +83,20 @@ module.exports = {
     }
 
     return 0; // on ne possède pas la ressource demandée
+  },
+  /*
+    vérifie si les objectifs sont remplis et effectue les actions correspondantes
+  */
+  verification_stop: function(param)
+  {
+    for(var i = 0; i < param.objectif.length; i++)
+    {
+      if(param.objectif[i].quantite < param.objectif[i].quantite_demandee)
+        return; // on quitte la fonction sans rien faire si un objectif n'est pas atteint
+    }
+
+    // tous les objectifs sont atteints, on prévient le coordinateur et on arrête le jeu
+    // TODO : coordinateur non défini
+    request.get('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/stop/' + param.ip + '/' + param.port); // est-ce que ça marche comme ça ?
   }
 };

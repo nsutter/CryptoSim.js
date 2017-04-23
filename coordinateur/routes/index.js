@@ -268,6 +268,18 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
   }
 });
 
+router.get('/stop/:ip/:port', function(req, res, next) {
+  console.log(req.params.ip + ':' + req.params.port + ' a terminé.');
+
+  // arrêter tous les autres agents
+
+  // récupérer tous les logs
+
+  etat == 2;
+
+  res.redirect('/fin');
+});
+
 // Fin de partie (affichage des scores, des graphiques, ...)
 router.get('/fin', function(req, res, next) {
   if(etat == 2) // phase de fin - OK
