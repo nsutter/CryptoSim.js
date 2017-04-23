@@ -29,6 +29,11 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
   }
 });
 
+function update()
+{
+  joueur.observer(param, agents.producteurs[0], 'producteur', 'ressources');
+}
+
 // lancement de la partie
 router.post('/start', function(req, res, next) {
   console.log('Récupération des autres agents...');
@@ -37,6 +42,8 @@ router.post('/start', function(req, res, next) {
   console.log('Démarrage du joueur...');
   // TODO : le joueur avec ses actions
   res.end();
+
+  setInterval(update, 1000); // chaque seconde
 });
 
 // observation des ressources

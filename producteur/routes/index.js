@@ -27,7 +27,7 @@ request('http://localhost:1337/producteur/inscription/localhost/3001', function 
   }
 });
 
-var serveur = "localhost:1337"
+var serveur = "localhost:1337";
 var quantite = param.quantite;
 
 // parseInt NE SONT PLUS NECESSAIRES car au niveau du coordinateur ? à tester

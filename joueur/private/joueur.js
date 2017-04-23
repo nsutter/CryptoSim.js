@@ -1,11 +1,14 @@
+var request = require('request');
+
 module.exports = {
   /*
     cible = le couple IP/port de la cible
     type_cible = producteur/joueur
     type_observation = ressources/strategie
-    /!\ le traitement de l'observation N'EST PAS effectué dans la fonction, l'observation est renvoyée
+    /!\ le traitement de l'observation N'EST PAS effectué dans la fonction
+    TODO : CALLBACK
   */
-  observer: function(cible, type_cible, type_observation)
+  observer: function(param, cible, type_cible, type_observation)
   {
     if(!param.observer)
       return {success: false};
@@ -23,7 +26,9 @@ module.exports = {
     }
 
     // requête
-    request.post(adresse, function(err, res, body){
+    request.get(adresse, function(err, res, body){
+
+      // CALLBACK
       return JSON.parse(body);
     });
   },
@@ -31,14 +36,14 @@ module.exports = {
     renvoie la quantité volée de la ressource volée à la cible
     /!\ le traitement du vol EST effectué dans la fonction
   */
-  voler: function(ressourceVolee, quantiteVolee, cible)
+  voler: function(param, ressourceVolee, quantiteVolee, cible)
   {
     // si on a pas le droit de voler, on s'arrête
     if(!param.voler)
       return;
 
     // construction de l'adresse et requête
-    request.post('http://' + cible.ip + ':' + cible.port + '/voler/ ' + ressourceVolee + '/' + quantiteVolee, function(err, res, body){
+    request.get('http://' + cible.ip + ':' + cible.port + '/voler/ ' + ressourceVolee + '/' + quantiteVolee, function(err, res, body){
       var resultat = JSON.parse(body);
 
       if(body.success) // mise à jour des objectifs
@@ -53,7 +58,7 @@ module.exports = {
     renvoie la quantité volée de la ressource volée
     TODO : seuil maximum de quantité volée
   */
-  se_faire_voler: function(ressourceVolee, quantiteVolee){
+  se_faire_voler: function(param, ressourceVolee, quantiteVolee){
 
     // si on a pas le droit de se faire voler, on s'arrête
     if(!param.voler)

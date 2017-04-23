@@ -2,6 +2,7 @@
 function exemple1()
 {
   $('[name="voler"]').prop('checked', true);
+  $('[name="observer"]').prop('checked', true);
 
   $('[name="objectif_nom"]').val('Ether');
   $('[name="objectif_quantite"]').val(35);
