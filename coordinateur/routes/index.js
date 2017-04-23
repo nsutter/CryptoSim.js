@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var SSH = require('simple-ssh');
+
 
 var coordinateur = require('../private/coordinateur');
 /*
@@ -10,6 +12,53 @@ etat = 2 -> phase de fin
 var etat = 0;
 
 var regles = {};
+
+function lance_ssh(ip, username, port, pass, producteur){
+  var ssh= new SSH({
+    host: ip,
+    user: username,
+    pass: pass
+  });
+
+  ssh.exec('git clone git@github.com:nsutter/CryptoSim.js.git', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+  ssh.exec('cd CryptoSim.js', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+  if(producteur == 1){
+    ssh.exec('cd producteur', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+    })
+  }
+  else {
+    ssh.exec('cd joueur', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+    })
+  }
+
+  ssh.exec('npm install', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
+
+  ssh.exec('PORT=' + port + ' npm start &', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  }).start();
+  ssh.end();
+}
+
 
 // Paramétrage des règles et des agents
 router.get('/', function(req, res, next) {
@@ -115,7 +164,27 @@ router.post('/regles', function(req, res, next) {
 
   console.log(regles);
 
+  // lance_ssh(ip, username, port, pass, producteur){
+
   // LANCER LES AGENTS EN SSH ICI
+  for(var i=0; i< regles.joueurs.length ; i++)
+  {
+    var client= regles.joueurs[i];
+    if(client.ip != "localhost")
+      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 0)
+    else {
+
+    }
+  }
+  for(var i=0; i< regles.producteur.length ; i++)
+  {
+    var client= regles.producteurs[i];
+    if(client.ip != "localhost")
+      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 1)
+    else {
+
+    }
+  }
 
   etat = 1; // on passe à la phase d'inscription
 
