@@ -39,9 +39,31 @@ router.post('/start', function(req, res, next) {
   res.end();
 });
 
-// se faire observer
-router.get('/observer', function(req, res, next) {
-  // if(regles.observer)
+// observation des ressources
+router.get('/show_ressource', function(req, res, next) {
+  if(param.observer)
+  {
+    var resultat = {};
+    resultat.success = true;
+    resultat.objectif = param.objectif;
+    res.send(resultat);
+  }
+  else
+  {
+    res.send({success: false});
+  }
+});
+
+// observation de la stratégie
+router.get('/show_strategie', function(req, res, next) {
+  if(param.observer)
+  {
+    res.send({success: true, strategie: param.strategie});
+  }
+  else
+  {
+    res.send({success: false});
+  }
 });
 
 // se faire voler la ressource :ressourceVolee en quantité :quantitéVolee
