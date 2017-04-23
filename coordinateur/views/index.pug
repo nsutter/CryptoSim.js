@@ -14,6 +14,14 @@ block content
     hr
     h3 Paramétrage des règles
 
+    label.radio-inline
+      input(type='radio', name='mode', value='Temps réel', checked)
+      | Jeu en temps réel
+    | &nbsp;
+    label.radio-inline
+      input(type='radio', name='mode', value='Tour par tour', disabled)
+      | Jeu au tour par tour
+
     .checkbox
       label
         input(type='checkbox', name='voler')

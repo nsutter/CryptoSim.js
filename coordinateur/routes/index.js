@@ -32,6 +32,13 @@ router.post('/regles', function(req, res, next) {
 
   // on construit ici un objet qui contient l'ensemble du système
 
+  if(req.body.mode == 'Tour par tour'){
+    regles.tour = true;
+  }
+  else {
+    regles.tour = false;
+  }
+
   // bool voler
   if(req.body.voler) {
     regles.voler = true;

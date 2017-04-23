@@ -31,7 +31,9 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
 
 function update()
 {
-  joueur.observer(param, agents.producteurs[0], 'producteur', 'ressources');
+  // INTÉGRER ICI UNE IA QUI PREND LE CONTRÔLE DU MONDE
+
+  // joueur.observer(param, agents.producteurs[0], 'producteur', 'ressources');
 }
 
 // lancement de la partie
