@@ -60,10 +60,10 @@ router.get('/show_ressource', function(req, res, next){
 router.get('/get_ressource/:nb', function(req, res, next){
   if(req.params.nb <= parseInt(param.quantite)){ // vérification de la quantité disponible
     param.quantite = parseInt(param.quantite) - req.params.nb;
-    res.send(req.params.nb); // envoi du nombre brut
+    res.send(req.params.nb + ""); // envoi du nombre brut
   }
   else {
-    res.send(param.quantite); // envoi du nombre brut
+    res.send(param.quantite + ""); // envoi du nombre brut
     quantite = 0;
   }
 });

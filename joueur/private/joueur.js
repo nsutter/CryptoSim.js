@@ -98,5 +98,100 @@ module.exports = {
     // tous les objectifs sont atteints, on prévient le coordinateur et on arrête le jeu
     // TODO : coordinateur non défini
     request.get('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/stop/' + param.ip + '/' + param.port); // est-ce que ça marche comme ça ?
+  },
+  /*
+    IA coopérative
+    - cherche à atteindre ses objectifs sans interaction avec les autres joueurs
+  */
+  cooperatif: function(param, agents)
+  {
+    // on cherche la ressource où l'on est le moins avancé dans les objectifs
+    var ressourceLaMoinsAvancee, quantiteLaMoinsAvancee = 0;
+
+    for(var i = 0; i < param.objectif.length; i++)
+    {
+      if(param.objectif[i].quantite_demandee - param.objectif[i].quantite > quantiteLaMoinsAvancee)
+      {
+        quantiteLaMoinsAvancee = param.objectif[i].quantite_demandee - param.objectif[i].quantite;
+        ressourceLaMoinsAvancee = param.objectif[i].nom;
+      }
+    }
+
+    if(ressourceLaMoinsAvancee)
+    {
+      // on cherche un producteur qui produit cette ressource
+      for(var i = 0; i < agents.producteurs.length; i++)
+      {
+        if(agents.producteurs[i].ressource == ressourceLaMoinsAvancee)
+        {
+          // requête de récupération de ressource chez le producteur choisi
+          request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
+
+            for(var j = 0; j < param.objectif.length; j++)
+            {
+              if(param.objectif[j].nom == ressourceLaMoinsAvancee)
+              {
+                param.objectif[i].quantite += parseInt(body);
+              }
+            }
+          });
+
+          return;
+        }
+      }
+    }
+  },
+  /*
+    IA individualiste
+    - cherche à atteindre ses objectifs en épuisant les ressources des producteurs
+  */
+  individualiste: function(param, agents)
+  {
+    // on cherche la 1ère ressource qu'on a pas réussi à obtenir complètement
+    for(var i = 0; i < param.objectif.length; i++)
+    {
+      if(param.objectif[i].quantite_demandee >= param.objectif[i].quantite)
+      {
+        // on cherche le 1er producteur qui produit cette ressource
+        for(var j = 0; j < agents.producteurs.length; j++)
+        {
+          if(agents.producteurs[j].ressource == param.objectif[i].nom)
+          {
+            // requête de récupération de ressource chez le producteur choisi
+            request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
+              // TODO : mettre à jour
+            });
+
+            return;
+          }
+        }
+      }
+    }
+  },
+  /*
+    IA voleuse
+    - cherche à atteindre ses objectifs en volant les autres joueurs
+  */
+  voleur: function(param, agents)
+  {
+    // TODO : code du voleur
+  },
+  /*
+    IA paranoiaque
+    - cherche à atteindre ses objectifs sans se faire voler
+  */
+  paranoiaque: function(param, agents)
+  {
+    // action spéciale
+    if(param.action)
+    {
+      param.action = false;
+      // TODO : se mettre en observation
+    }
+    else
+    {
+      param.action = true;
+      cooperatif(param, agents);
+    }
   }
 };
