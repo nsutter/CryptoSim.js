@@ -14,48 +14,58 @@ var etat = 0;
 var regles = {};
 
 function lance_ssh(ip, username, port, pass, producteur){
+  console.log("Debut ssh");
+  console.log(username);
+  console.log(ip);
+  console.log(port);
+  console.log(pass);
   var ssh = new SSH({
     host: ip,
     user: username,
-    pass: pass
+    pass: pass,
   });
+  ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
+    out: function(stdout) {
+      console.log(stdout);
+    },
+    err: function(stderr) {
+      console.log(stderr); // this-does-not-exist: command not found
+    }
+  })
+  .exec('cd CryptoSim.js', {
+    out: function(stdout) {
+        console.log(stdout);
+    }
+  })
 
-  ssh.exec('git clone git@github.com:nsutter/CryptoSim.js.git', {
-    out: function(stdout) {
-        console.log(stdout);
-    }
-  })
-  ssh.exec('cd CryptoSim.js', {
-    out: function(stdout) {
-        console.log(stdout);
-    }
-  })
   if(producteur == 1){
     ssh.exec('cd producteur', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
     })
   }
   else {
     ssh.exec('cd joueur', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
     })
   }
+  console.log("ok");
 
   ssh.exec('npm install', {
     out: function(stdout) {
-        console.log(stdout);
+      console.log(stdout);
     }
   })
 
-  ssh.exec('PORT=' + port + ' npm start &', {
+  .exec('PORT=' + port + ' npm start &', {
     out: function(stdout) {
-        console.log(stdout);
+      console.log(stdout);
     }
-  }).start();
+  })
+  .start();
   ssh.end();
 }
 
@@ -170,7 +180,7 @@ router.post('/regles', function(req, res, next) {
   {
     var client= regles.joueurs[i];
     if(client.ip != "localhost")
-      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 0)
+      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 0)
     else {
       // on lance à la main pour le moment
     }
@@ -179,7 +189,7 @@ router.post('/regles', function(req, res, next) {
   {
     var client= regles.producteurs[i];
     if(client.ip != "localhost")
-      lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 1)
+      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 1)
     else {
       // on lance à la main pour le moment
     }
