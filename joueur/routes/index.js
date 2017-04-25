@@ -4,6 +4,8 @@ var router = express.Router();
 
 var joueur = require('../private/joueur');
 
+var data= require('../model/data');
+
 var param = {};
 var agents = {};
 
@@ -63,6 +65,8 @@ function update()
   }
 
   console.log(param.objectif);
+  var TimeInMS = Date.now()
+  data.register(new data({ip: param.ip, port: param.port, partie: param.idpartie, date: TimeInMS, ressources: param.objectif });
 
   // vérification s'il a réussi ses objectifs
   joueur.verification_stop(param);

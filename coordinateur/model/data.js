@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Data', {
-  joueur: String,
-  ressource: String,
-  quantite: Number,
+  ip String,
+  port: String,
+  partie: String,
+  ressources: [],
 	date: Date
 });
