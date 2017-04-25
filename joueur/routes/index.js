@@ -9,6 +9,7 @@ var agents = {};
 
 // récupération de paramètres du joueur
 // TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
+console.log('Téléchargement des paramètres...')
 request('http://localhost:1337/joueur/inscription/localhost/2001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);
@@ -18,11 +19,23 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
       process.exit(1);
     }
 
-    console.log('Téléchargement des paramètres...')
+    console.log('Initialisation de la stratégie...')
+    if(param.strategie == 'voleur')
+    {
+      param.action = false;
+
+      // TODO : réfléchir au voleur..
+    }
+    else if(param.strategie == 'paranoiaque')
+    {
+      param.action = false;
+    }
+
     console.log(param);
+
   }
   else { // par défaut
-    param.strategie = 'Mec de gauche';
+    param.strategie = 'cooperatif';
     param.voler = false;
     param.observer = false;
     param.Nressources = 10;
@@ -31,9 +44,28 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
 
 function update()
 {
-  // INTÉGRER ICI UNE IA QUI PREND LE CONTRÔLE DU MONDE
+  // action du joueur en fonction de sa stratégie
+  if(param.strategie == 'cooperatif')
+  {
+    joueur.cooperatif(param, agents);
+  }
+  else if(param.strategie == 'individualiste')
+  {
+    joueur.individualiste(param, agents);
+  }
+  else if(param.strategie == 'voleur')
+  {
+    joueur.voleur(param, agents);
+  }
+  else if(param.strategie == 'paranoiaque')
+  {
+    joueur.paranoiaque(param, agents);
+  }
+
+  console.log(param.objectif);
+
+  // vérification s'il a réussi ses objectifs
   joueur.verification_stop(param);
-  // joueur.observer(param, agents.producteurs[0], 'producteur', 'ressources');
 }
 
 // lancement de la partie

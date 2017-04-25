@@ -83,10 +83,10 @@ block content
           | &nbsp;
           select(name='joueur_strategie')
             option(disabled, selected) Stratégie
-            option Le spammeur
-            option Le voleur
-            option Le paranoïaque
-            option Le spammeur
+            option(value='cooperatif') Coopératif
+            option(value='individualiste') Individualiste
+            option(value='voleur') Voleur
+            option(value='paranoiaque') Paranoïaque
           | &nbsp;
           .form-group
             .sr-only(for='joueur_id') Port
