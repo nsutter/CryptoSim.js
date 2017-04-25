@@ -14,7 +14,7 @@ var etat = 0;
 var regles = {};
 
 function lance_ssh(ip, username, port, pass, producteur){
-  var ssh= new SSH({
+  var ssh = new SSH({
     host: ip,
     user: username,
     pass: pass
@@ -126,7 +126,7 @@ router.post('/regles', function(req, res, next) {
   // object coordinateur
   regles.coordinateur = {ip: req.body.coordinateur_ip, port: parseInt(req.body.coordinateur_port)};
 
-  // array liste des joueurs (sites)
+  // array liste des joueurs
   regles.joueurs = []; // sites
   regles.joueursParametres = []; // parametres
 
@@ -134,14 +134,15 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.joueur_ip.length; i++)
     {
-      regles.joueurs.push({ip: req.body.joueur_ip[i], port: parseInt(req.body.joueur_port[i]), inscription: false});
-      regles.joueursParametres.push({strategie: req.body.joueur_strategie[i]})
+      regles.joueurs.push({ip: req.body.joueur_ip[i], port: parseInt(req.body.joueur_port[i]), identifiant: req.body.joueur_id[i], pass: req.body.joueur_pass[i], inscription: false});
+      regles.joueursParametres.push({strategie: req.body.joueur_strategie[i]});
     }
   }
   else
   {
-    regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), strategie: req.body.joueur_strategie, inscription: false});
-    regles.joueursParametres.push({strategie: req.body.joueur_strategie})
+    // stratégie en double ??
+    regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), strategie: req.body.joueur_strategie, identifiant: req.body.joueur_id, pass: req.body.joueur_pass, inscription: false});
+    regles.joueursParametres.push({strategie: req.body.joueur_strategie});
   }
 
   // array liste des producteurs
@@ -152,37 +153,35 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
-      regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), inscription: false});
-      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite : parseInt(req.body.producteur_quantite_produite[i])})
+      regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), identifiant: req.body.producteur_id[i], pass: req.body.producteur_pass[i], inscription: false});
+      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite : parseInt(req.body.producteur_quantite_produite[i])});
     }
   }
   else
   {
-    regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite), inscription: false});
-    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)})
+    // certains paramètres en double ?
+    regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
+    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)});
   }
 
   console.log(regles);
 
-  // lance_ssh(ip, username, port, pass, producteur){
-
-  // LANCER LES AGENTS EN SSH ICI
   for(var i=0; i< regles.joueurs.length ; i++)
   {
     var client= regles.joueurs[i];
     if(client.ip != "localhost")
       lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 0)
     else {
-
+      // on lance à la main pour le moment
     }
   }
-  for(var i=0; i< regles.producteur.length ; i++)
+  for(var i=0; i< regles.producteurs.length ; i++)
   {
     var client= regles.producteurs[i];
     if(client.ip != "localhost")
       lance_ssh(client.ip, "nsutter", client.port, "motdepasse", 1)
     else {
-
+      // on lance à la main pour le moment
     }
   }
 

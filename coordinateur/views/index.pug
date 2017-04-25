@@ -83,8 +83,18 @@ block content
           | &nbsp;
           select(name='joueur_strategie')
             option(disabled, selected) Stratégie
-            option Mec de gauche
-            option Mec de droite
+            option Le spammeur
+            option Le voleur
+            option Le paranoïaque
+            option Le spammeur
+          | &nbsp;
+          .form-group
+            .sr-only(for='joueur_id') Port
+            input.form-control(type='text', id='joueur_id', name='joueur_id', placeholder='Identifiant')
+          | &nbsp;
+          .form-group
+            .sr-only(for='joueur_pass') Port
+            input.form-control(type='password', id='joueur_pass', name='joueur_pass', placeholder='Mot de passe')
           | &nbsp;
           button.btn.btn-danger(data-role='remove')
             span.glyphicon.glyphicon-remove
@@ -120,6 +130,14 @@ block content
           .form-group
             .sr-only(for='producteur_quantite_produite') Quantité produite
             input.form-control(type='text', id='producteur_quantite_produite', name='producteur_quantite_produite', placeholder='Quantité produite', required)
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_id') Port
+            input.form-control(type='text', id='producteur_id', name='producteur_id', placeholder='Identifiant')
+          | &nbsp;
+          .form-group
+            .sr-only(for='producteur_pass') Port
+            input.form-control(type='password', id='producteur_pass', name='producteur_pass', placeholder='Mot de passe')
           | &nbsp;
           button.btn.btn-danger(data-role='remove')
             span.glyphicon.glyphicon-remove
