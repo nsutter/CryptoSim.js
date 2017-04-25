@@ -15,66 +15,46 @@ var regles = {};
 
 function lance_ssh(ip, username, port, pass, producteur){
   var ssh = new SSH({
-    host: ip,
-    user: username,
-    pass: pass
-});
+      host: ip,
+      user: username,
+      pass: pass,
+  });
 
-ssh.exec('echo $PATH', {
-    out: function(stdout) {
-        console.log(stdout);
-    }
-}).start();
-
-  // console.log("Debut ssh");
-  // var ssh = new SSH({
-  //   host: ip,
-  //   user: username,
-  //   pass: pass,
-  // });
-  // ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   },
-  //   err: function(stderr) {
-  //     console.log(stderr); // this-does-not-exist: command not found
-  //   }
-  // })
-  // .exec('cd CryptoSim.js', {
-  //   out: function(stdout) {
-  //       console.log(stdout);
-  //   }
-  // }).start()
-  //
-  // if(producteur == 1){
-  //   ssh.exec('cd producteur', {
-  //     out: function(stdout) {
-  //       console.log(stdout);
-  //     }
-  //   })
-  // }
-  // else {
-  //   ssh.exec('cd joueur', {
-  //     out: function(stdout) {
-  //       console.log(stdout);
-  //     }
-  //   })
-  // }
-  // console.log("ok");
-  //
-  // ssh.exec('npm install', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   }
-  // })
-  //
-  // .exec('PORT=' + port + ' npm start &', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   }
-  // })
-  // .start();
-  // ssh.end();
+  ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.exec('cd CryptoSim.js', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  if(producteur == 1){
+    ssh.exec('cd producteur', {
+        out: function(stdout) {
+            console.log(stdout);
+        }
+    }).start();
+  }
+  else {
+    ssh.exec('cd joueur', {
+        out: function(stdout) {
+            console.log(stdout);
+        }
+    }).start();
+  }
+  ssh.exec('npm install', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.exec('PORT=' + port + ' npm start &', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.end();
 }
 
 
