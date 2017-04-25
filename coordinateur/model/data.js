@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Data', {
-  ip String,
+  ip: String,
   port: String,
   partie: String,
   ressources: [],
