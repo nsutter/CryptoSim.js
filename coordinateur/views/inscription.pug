@@ -24,30 +24,50 @@ block content
       a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
 
   if nJoueurs == 0 && nProducteurs == 0
-    #graphique(style="width: 800px; height: 500px;")
-      script.
-        console.log(data);
-        var dt= !{JSON.stringify(data)};
-        var i;
-        var tab=[];
-        var tab2= [];
-        for(i=0; i<dt.length; i++)
+    - var num=1
+    while num <= regles.joueurs.length
+      div(id= "c" + num, style="width: 800px; height: 400px;")
+      - num = num +1
+    script.
+      var dt= !{JSON.stringify(data)};
+      var dataGraph;
+      var i=0, k=0, l=0;
+      var tab;
+      var tab2;
+      for(k=0; k<dt.length;)
+      {
+        l= l+1;
+        tab=[];
+        tab2= [];
+        dataGraph= [];
+        var next= dt[k].joueur;
+        var current= dt[k].joueur;
+        i=0;
+        while(k<dt.length && next == current)
         {
-          tab2.push([]);
-          for(var j=0; j<dt[i].ressources.length; j++)
+          current= dt[k].joueur;
+          tab.push(dt[k].date);
+          for(var j=0; j<dt[k].ressources.length; j++)
           {
-            tab.push(dt[i].date);
-            tab2[j][i] = (dt[i].ressources[j]);
+            tab2.push([]);
+            tab2[j][i] = (dt[k].ressources[j]);
           }
+          i= i+1;
+          k= k+1;
+          if(i < dt.length)
+            next= dt[i].joueur;
         }
-        console.log(tab2);
-        var trace1 = {
-          x: tab,
-          y: tab2[0],
-          type: 'scatter'
-        };
-        var data = [trace1];
-        Plotly.newPlot('graphique', data);
+        for(j=0; j<dt[0].ressources.length; j++)
+        {
+          var trace1 = {
+            x: tab,
+            y: tab2[j],
+            type: 'scatter'
+          };
+          dataGraph.push(trace1);
+        }
+        Plotly.newPlot('c'+l, dataGraph);
+      }
 
   if nJoueurs != 0 || nProducteurs != 0
     h2 #{nJoueurs} joueur(s) en attente

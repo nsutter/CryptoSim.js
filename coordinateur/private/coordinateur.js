@@ -57,7 +57,6 @@ module.exports = {
         if(!err)
         {
           console.log('statusCode:', res.statusCode);
-          regles.joueurs[i].stop = true;
         }
       });
     }

@@ -221,7 +221,7 @@ router.get('/inscription', function(req, res, next) {
         nProducteurs++;
     }
 
-    data.find({}, function (err, data) {
+    data.find({}).sort({joueur: 1, date: 1}).exec(function (err, data) {
       console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
     });
