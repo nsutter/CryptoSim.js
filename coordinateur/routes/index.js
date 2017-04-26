@@ -210,7 +210,7 @@ router.post('/regles', function(req, res, next) {
   {
     var client= regles.producteurs[i];
     if(client.ip != 'localhost')
-      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 1)
+      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 1, regles.coordinateur.ip, regles.coordinateur.port)
     else {
       // lancement local en considérant que le code source est déjà téléchargé
       var commande = 'cd ../producteur && npm install && PORT=' + regles.producteurs[i].port + ' CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' npm start';
