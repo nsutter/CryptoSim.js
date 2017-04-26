@@ -1,4 +1,6 @@
 var express = require('express');
+var sys = require('sys');
+var exec = require('child_process').exec;
 var router = express.Router();
 var SSH = require('simple-ssh');
 
@@ -13,13 +15,18 @@ var etat = 0;
 
 var regles = {};
 
-function lance_ssh(ip, username, port, pass, producteur){
+/*
+  cip = ip du coordinateur
+  cport = port du coordinateur
+*/
+function lance_ssh(ip, username, port, pass, producteur, cip, cport){
   var ssh = new SSH({
     host: ip,
     user: username,
     pass: pass
 });
 
+// EXEMPLE QUI MARCHE
 ssh.exec('echo $PATH', {
     out: function(stdout) {
         console.log(stdout);
@@ -68,7 +75,7 @@ ssh.exec('echo $PATH', {
   //   }
   // })
   //
-  // .exec('PORT=' + port + ' npm start &', {
+  // .exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + npm start &', {
   //   out: function(stdout) {
   //     console.log(stdout);
   //   }
@@ -187,19 +194,31 @@ router.post('/regles', function(req, res, next) {
   for(var i=0; i< regles.joueurs.length ; i++)
   {
     var client= regles.joueurs[i];
-    if(client.ip != "localhost")
-      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 0)
+    if(client.ip != 'localhost')
+      lance_ssh(client.ip, client.identifiant, client.port, client.pass, 0, regles.coordinateur.ip, regles.coordinateur.port)
     else {
-      // on lance à la main pour le moment
+      // lancement local en considérant que le code est déjà installé
+      var commande = 'cd ../joueur && npm install && PORT=' + regles.joueurs[i].port + ' CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' npm start';
+      console.log(commande);
+      exec(commande, function(err, stdout, stderr){
+        sys.print('stdout ' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '=' + stdout);
+        sys.print('stderr ' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '=' + stderr);
+      });
     }
   }
   for(var i=0; i< regles.producteurs.length ; i++)
   {
     var client= regles.producteurs[i];
-    if(client.ip != "localhost")
+    if(client.ip != 'localhost')
       lance_ssh(client.ip, client.identifiant, client.port, client.pass, 1)
     else {
-      // on lance à la main pour le moment
+      // lancement local en considérant que le code source est déjà téléchargé
+      var commande = 'cd ../producteur && npm install && PORT=' + regles.producteurs[i].port + ' CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' npm start';
+      console.log(commande);
+      exec(commande, function(err, stdout, stderr){
+        sys.print('stdout ' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '=' + stdout);
+        sys.print('stderr ' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '=' + stderr);
+      });
     }
   }
 

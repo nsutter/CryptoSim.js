@@ -5,10 +5,12 @@ var router = express.Router();
 module.exports = router;
 
 var param = {};
-
+param.coordinateur = {};
+param.coordinateur.ip = process.env.CIP;
+param.coordinateur.port = process.env.CPORT;
 // récupération de paramètres du producteur
 // TODO : adresse du coordinateur et du producteur dynamique (lancé avec le script)
-request('http://localhost:1337/producteur/inscription/localhost/3001', function (error, response, body) {
+request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/producteur/inscription/localhost/3001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);
 
@@ -27,7 +29,6 @@ request('http://localhost:1337/producteur/inscription/localhost/3001', function 
   }
 });
 
-var serveur = "localhost:1337";
 var quantite = param.quantite;
 
 // parseInt NE SONT PLUS NECESSAIRES car au niveau du coordinateur ? à tester
