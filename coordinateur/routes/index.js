@@ -209,7 +209,10 @@ router.get('/inscription', function(req, res, next) {
       if(!regles.producteurs[i].inscription)
         nProducteurs++;
     }
-    res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs});
+    data.find({}, function (err, data) {
+      console.log(data);
+      res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
+    });
   }
   else if(etat == 0) // phase de paramétrage
   {
