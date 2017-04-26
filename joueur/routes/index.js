@@ -14,8 +14,8 @@ param.coordinateur.port = process.env.CPORT;
 
 // récupération de paramètres du joueur
 // TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
-console.log('Téléchargement des paramètres...')
-request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/joueur/inscription/localhost/2001', function (error, response, body) {
+console.log('Téléchargement des paramètres...');
+request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/joueur/inscription/' + process.argv[2] + '/' + process.argv[3], function (error, response, body) {
   if(response){
     param = JSON.parse(body);
 
@@ -24,7 +24,7 @@ request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/jo
       process.exit(1);
     }
 
-    console.log('Initialisation de la stratégie...')
+    console.log('Initialisation de la stratégie...');
     if(param.observer)
     {
       param.observation = false;
