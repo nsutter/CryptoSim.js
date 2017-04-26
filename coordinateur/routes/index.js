@@ -7,6 +7,7 @@ var data= require('../model/data');
 
 
 var coordinateur = require('../private/coordinateur');
+
 /*
 etat = 0 -> phase de paramétrage
 etat = 1 -> phase de d'inscription
@@ -146,6 +147,7 @@ router.post('/regles', function(req, res, next) {
 
   if(req.body.joueur_ip.constructor === Array)
   {
+    console.log('JOUEUR Array');
     for(var i = 0; i < req.body.joueur_ip.length; i++)
     {
       regles.joueurs.push({ip: req.body.joueur_ip[i], port: parseInt(req.body.joueur_port[i]), identifiant: req.body.joueur_id[i], pass: req.body.joueur_pass[i], inscription: false});
@@ -154,8 +156,9 @@ router.post('/regles', function(req, res, next) {
   }
   else
   {
+    console.log('JOUEUR !Array');
     // stratégie en double ??
-    regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), strategie: req.body.joueur_strategie, identifiant: req.body.joueur_id, pass: req.body.joueur_pass, inscription: false});
+    regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), identifiant: req.body.joueur_id, pass: req.body.joueur_pass, inscription: false});
     regles.joueursParametres.push({strategie: req.body.joueur_strategie});
   }
 
@@ -165,6 +168,8 @@ router.post('/regles', function(req, res, next) {
 
   if(req.body.producteur_ip.constructor === Array)
   {
+    console.log('PRODUCTEUR Array');
+
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
       regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), identifiant: req.body.producteur_id[i], pass: req.body.producteur_pass[i], inscription: false});
@@ -173,40 +178,42 @@ router.post('/regles', function(req, res, next) {
   }
   else
   {
+  console.log('PRODUCTEUR !Array');
+
     // certains paramètres en double ?
-    regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
+    regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
     regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)});
   }
 
   console.log(regles);
 
-  for(var i=0; i< regles.joueurs.length ; i++)
+  for(var i = 0; i < regles.joueurs.length; i++)
   {
-    var client= regles.joueurs[i];
+    var client = regles.joueurs[i];
     if(client.ip != 'localhost')
       lance_ssh(client.ip, client.identifiant, client.port, client.pass, 0, regles.coordinateur.ip, regles.coordinateur.port)
     else {
       // lancement local en considérant que le code est déjà installé
-      var commande = 'cd ../joueur && npm install && PORT=' + regles.joueurs[i].port + ' CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' npm start';
+      var commande = 'cd ../joueur && npm install && CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' node bin/www ' + client.ip + ' ' + client.port;
       console.log(commande);
       exec(commande, function(err, stdout, stderr){
-        sys.print('stdout ' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '=' + stdout);
-        sys.print('stderr ' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '=' + stderr);
+        sys.print('stdout :' + stdout);
+        sys.print('stderr :' + stderr);
       });
     }
   }
-  for(var i=0; i< regles.producteurs.length ; i++)
+  for(var i = 0; i < regles.producteurs.length; i++)
   {
-    var client= regles.producteurs[i];
+    var client = regles.producteurs[i];
     if(client.ip != 'localhost')
       lance_ssh(client.ip, client.identifiant, client.port, client.pass, 1, regles.coordinateur.ip, regles.coordinateur.port)
     else {
       // lancement local en considérant que le code source est déjà téléchargé
-      var commande = 'cd ../producteur && npm install && PORT=' + regles.producteurs[i].port + ' CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' npm start';
+      var commande = 'cd ../producteur && npm install && CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' node bin/www ' + client.ip + ' ' + client.port;
       console.log(commande);
       exec(commande, function(err, stdout, stderr){
-        sys.print('stdout ' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '=' + stdout);
-        sys.print('stderr ' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '=' + stderr);
+        sys.print('stdout :' + stdout);
+        sys.print('stderr :' + stderr);
       });
     }
   }
@@ -233,6 +240,12 @@ router.get('/inscription', function(req, res, next) {
       if(!regles.producteurs[i].inscription)
         nProducteurs++;
     }
+    if(nJoueurs == 0 && nProducteurs == 0)
+    {
+      console.log('\n\n' + JSON.stringify(regles.joueurs) + '\n\n');
+      console.log('\n\n' + JSON.stringify(regles.producteurs) + '\n\n');
+    }
+
     data.find({sort: {joueur}}, function (err, data) {
       console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
@@ -249,10 +262,14 @@ router.get('/inscription', function(req, res, next) {
 });
 
 router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
+
+  console.log('\n\nTentative : ' + req.params.ip + req.params.port);
+
   if(regles.producteursParametres && regles.producteursParametres.length > 0)
   {
     for(var i = 0; i < regles.producteurs.length; i++)
     {
+      // console.log(regles.producteurs[i].ip + '-' + req.params.ip + '-' + regles.producteurs[i].port + '-' + req.params.port);
       if(regles.producteurs[i].ip == req.params.ip && regles.producteurs[i].port == req.params.port)
       {
         // on copie les 1ers paramètres en attente
@@ -260,8 +277,10 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
         regles.producteurs[i].quantite = regles.producteursParametres[0].quantite;
         regles.producteurs[i].quantite_produite = regles.producteursParametres[0].quantite_produite;
 
+        console.log('avant: ' + JSON.stringify(regles.producteursParametres))
         // on supprime les paramètres copiés
         regles.producteursParametres.splice(0, 1);
+        console.log('apres: ' + JSON.stringify(regles.producteursParametres))
 
         // on valide l'inscription
         regles.producteurs[i].inscription = true;

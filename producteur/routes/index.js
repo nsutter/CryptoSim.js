@@ -10,7 +10,7 @@ param.coordinateur.ip = process.env.CIP;
 param.coordinateur.port = process.env.CPORT;
 // récupération de paramètres du producteur
 // TODO : adresse du coordinateur et du producteur dynamique (lancé avec le script)
-request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/producteur/inscription/localhost/3001', function (error, response, body) {
+request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/producteur/inscription/' + process.argv[2] + '/' + process.argv[3], function (error, response, body) {
   if(response){
     param = JSON.parse(body);
 
@@ -46,7 +46,7 @@ function update()
 
 // lancement de la partie
 router.post('/start', function(req, res, next){
-  console.log('\nDémarrage de la production...')
+  console.log('\nDémarrage de la production...');
   setInterval(update, 1000); // chaque seconde
   res.end();
 });
