@@ -16,25 +16,36 @@ block content
 
 
   if nJoueurs == 0 && nProducteurs == 0
-    #graphique(style="width: 800px; height: 500px;")
-      script.
-        var dt= !{JSON.stringify(data)};
-        var dataGraph= [];
-        var i=0, k=0;
-        var tab=[];
-        var tab2= [];
-        var next= dt[i].joueur;
-        var current= dt[i].joueur;
-        while(i<dt.length && next == current)
+    - var num=1
+    while num <= regles.joueurs.length
+      div(id= "c" + num, style="width: 480px; height: 400px;")
+      - num = num +1
+    script.
+      var dt= !{JSON.stringify(data)};
+      var dataGraph;
+      var i=0, k=0, l=0;
+      var tab;
+      var tab2;
+      for(k=0; k<dt.length;)
+      {
+        l= l+1;
+        tab=[];
+        tab2= [];
+        dataGraph= [];
+        var next= dt[k].joueur;
+        var current= dt[k].joueur;
+        i=0;
+        while(k<dt.length && next == current)
         {
-          current= dt[i].joueur;
-          tab.push(dt[i].date);
-          for(var j=0; j<dt[i].ressources.length; j++)
+          current= dt[k].joueur;
+          tab.push(dt[k].date);
+          for(var j=0; j<dt[k].ressources.length; j++)
           {
             tab2.push([]);
-            tab2[j][i] = (dt[i].ressources[j]);
+            tab2[j][i] = (dt[k].ressources[j]);
           }
           i= i+1;
+          k= k+1;
           if(i < dt.length)
             next= dt[i].joueur;
         }
@@ -47,7 +58,8 @@ block content
           };
           dataGraph.push(trace1);
         }
-        Plotly.newPlot('graphique', dataGraph);
+        Plotly.newPlot('c'+l, dataGraph);
+      }
 
   if nJoueurs != 0 || nProducteurs != 0
     h2 #{nJoueurs} joueur(s) en attente
