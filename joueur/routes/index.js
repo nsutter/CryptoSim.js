@@ -74,10 +74,13 @@ function update()
   {
     joueur.paranoiaque(param, agents);
   }
-
+  var tab= [];
+  for(var i=0; i< param.objectif.length; i++){
+    tab.push(param.objectif[i].quantite);
+  }
   console.log(param.objectif);
   var TimeInMS = new Date().getTime();
-  var newData = new data({joueur: param.ip + param.port, partie: param.idpartie, date: TimeInMS, ressources: param.objectif });
+  var newData = new data({joueur: param.ip + param.port, date: TimeInMS, ressources: param.objectif[0].quantite});
   newData.save();
 
   // vérification s'il a réussi ses objectifs

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  meta(http-equiv='refresh', content='1')
+  meta(http-equiv='refresh', content='0.5')
 
   if(regles.dateDebut)
     h1 En cours d'exécution...
@@ -14,20 +14,31 @@ block content
       | &nbsp;
       a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
 
+
   if nJoueurs == 0 && nProducteurs == 0
-    #graphique(style="width: 480px; height: 400px;")
+    #graphique(style="width: 800px; height: 500px;")
       script.
+        console.log(data);
+        var dt= !{JSON.stringify(data)};
+        var i;
+        var tab=[];
+        var tab2= [];
+        for(i=0; i<dt.length; i++)
+        {
+          tab2.push([]);
+          for(var j=0; j<dt[i].ressources.length; j++)
+          {
+            tab.push(dt[i].date);
+            tab2[j][i] = (dt[i].ressources[j]);
+          }
+        }
+        console.log(tab2);
         var trace1 = {
-          x: [1, 2, 3, 4],
-          y: [10, 15, 13, 17],
+          x: tab,
+          y: tab2[0],
           type: 'scatter'
         };
-        var trace2 = {
-          x: [1, 2, 3, 4],
-          y: [16, 5, 11, 9],
-          type: 'scatter'
-        };
-        var data = [trace1, trace2];
+        var data = [trace1];
         Plotly.newPlot('graphique', data);
 
   if nJoueurs != 0 || nProducteurs != 0
