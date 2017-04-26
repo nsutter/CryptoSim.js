@@ -240,6 +240,13 @@ router.get('/inscription', function(req, res, next) {
       if(!regles.producteurs[i].inscription)
         nProducteurs++;
     }
+
+    if(nJoueurs == 0 && nProducteurs == 0)
+    {
+      console.log('\n\n' + JSON.stringify(regles.joueurs) + '\n\n');
+      console.log('\n\n' + JSON.stringify(regles.producteurs) + '\n\n');
+    }
+
     data.find({}, function (err, data) {
       console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
