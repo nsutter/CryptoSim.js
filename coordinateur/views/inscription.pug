@@ -14,50 +14,51 @@ block content
       | &nbsp;
       a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
 
-  h2 #{nJoueurs} joueur(s) en attente
-  table.table.table-bordered
-    tr
-      th Adresse IP
-      th Port
-      th Stratégie
-    - var i = 0
-    while i < regles.joueurs.length
-      if regles.joueurs[i].inscription
-        tr.success
-          td #{regles.joueurs[i].ip}
-          td #{regles.joueurs[i].port}
-          td #{regles.joueurs[i].strategie}
-      else
-        tr.danger
-          td #{regles.joueurs[i].ip}
-          td #{regles.joueurs[i].port}
-          td /
+  if( nJoueurs != 0)
+    h2 #{nJoueurs} joueur(s) en attente
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Stratégie
+      - var i = 0
+      while i < regles.joueurs.length
+        if regles.joueurs[i].inscription
+          tr.success
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td #{regles.joueurs[i].strategie}
+        else
+          tr.danger
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td /
 
-      - i = i + 1
+        - i = i + 1
 
-  h2 #{nProducteurs} producteur(s) en attente
-  table.table.table-bordered
-    tr
-      th Adresse IP
-      th Port
-      th Ressource
-      th Quantité initiale
-      th Quantité produite
-    - var i = 0
-    while i < regles.producteurs.length
-      if regles.producteurs[i].inscription
-        tr.success
-          td #{regles.producteurs[i].ip}
-          td #{regles.producteurs[i].port}
-          td #{regles.producteurs[i].ressource}
-          td #{regles.producteurs[i].quantite}
-          td #{regles.producteurs[i].quantite_produite}
-      else
-        tr.danger
-          td #{regles.producteurs[i].ip}
-          td #{regles.producteurs[i].port}
-          td /
-          td /
-          td /
+    h2 #{nProducteurs} producteur(s) en attente
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Ressource
+        th Quantité initiale
+        th Quantité produite
+      - var i = 0
+      while i < regles.producteurs.length
+        if regles.producteurs[i].inscription
+          tr.success
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td #{regles.producteurs[i].ressource}
+            td #{regles.producteurs[i].quantite}
+            td #{regles.producteurs[i].quantite_produite}
+        else
+          tr.danger
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td /
+            td /
+            td /
 
-      - i = i + 1
+        - i = i + 1

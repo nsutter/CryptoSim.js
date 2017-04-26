@@ -66,7 +66,8 @@ function update()
 
   console.log(param.objectif);
   var TimeInMS = Date.now()
-  data.register(new data({ip: param.ip, port: param.port, partie: param.idpartie, date: TimeInMS, ressources: param.objectif }));
+  var newData = new data({ip: param.ip, port: param.port, partie: param.idpartie, date: TimeInMS, ressources: param.objectif });
+  newData.save();
 
   // vérification s'il a réussi ses objectifs
   joueur.verification_stop(param);
