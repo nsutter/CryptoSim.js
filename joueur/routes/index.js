@@ -4,18 +4,15 @@ var router = express.Router();
 
 var joueur = require('../private/joueur');
 
-var data= require('../model/data');
+var data = require('../model/data');
 
 var param = {};
 var agents = {};
-param.coordinateur = {};
-param.coordinateur.ip = process.env.CIP;
-param.coordinateur.port = process.env.CPORT;
 
 // récupération de paramètres du joueur
 // TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
 console.log('Téléchargement des paramètres...');
-request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/joueur/inscription/' + process.argv[2] + '/' + process.argv[3], function (error, response, body) {
+request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscription/' + process.argv[2] + '/' + process.argv[3], function (error, response, body) {
   if(response){
     param = JSON.parse(body);
 
@@ -42,7 +39,6 @@ request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/jo
     }
 
     console.log(param);
-
   }
   else { // par défaut
     param.strategie = 'cooperatif';
@@ -50,6 +46,12 @@ request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/jo
     param.observer = false;
     param.Nressources = 10;
   }
+
+  param.coordinateur = {};
+  param.coordinateur.ip = process.env.CIP;
+  param.coordinateur.port = process.env.CPORT;
+
+  param.fini = false; // défini si le joueur a fini
 });
 
 function update()
@@ -101,6 +103,11 @@ router.post('/start', function(req, res, next) {
 
 // observation des ressources
 router.get('/show_ressource', function(req, res, next) {
+  if(param.stop) // si le joueur a fini, on transmet au client qu'on a fini
+  {
+    res.send({success: false, raison: 'stop'})
+  }
+
   if(param.observer)
   {
     var resultat = {};
@@ -110,28 +117,42 @@ router.get('/show_ressource', function(req, res, next) {
   }
   else
   {
-    res.send({success: false});
+    res.send({success: false, raison: 'impossible'});
   }
 });
 
 // observation de la stratégie
 router.get('/show_strategie', function(req, res, next) {
+  if(param.stop) // si le joueur a fini, on transmet au client qu'on a fini
+  {
+    res.send({success: false, raison: 'stop'})
+  }
+
   if(param.observer)
   {
     res.send({success: true, strategie: param.strategie});
   }
   else
   {
-    res.send({success: false});
+    res.send({success: false, raison: 'impossible'});
   }
 });
 
 // se faire voler la ressource :ressourceVolee en quantité :quantitéVolee
 router.get('/voler/:ressourceVolee/:quantiteVolee', function(req, res, next) {
+  if(param.stop) // si le joueur a fini, on transmet au client qu'on a fini
+  {
+    res.send({success: false, raison: 'stop'})
+  }
 
   var quantiteVolee = joueur.se_faire_voler(req.params.ressource, req.params.quantiteVolee);
 
-  res.json({success: true, quantiteVolee: quantiteVolee});
+  res.json({success: true, quantiteVolee: quantiteVolee}); // un vol qui échoue renvoie 0
 });
+
+// arrêt
+router.get('/end', function(req, res, next) {
+  process.exit();
+})
 
 module.exports = router;

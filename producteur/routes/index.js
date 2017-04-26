@@ -68,3 +68,8 @@ router.get('/get_ressource/:nb', function(req, res, next){
     quantite = 0;
   }
 });
+
+// arrêt
+router.get('/end', function(req, res, next) {
+  process.exit();
+})

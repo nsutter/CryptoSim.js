@@ -43,5 +43,34 @@ module.exports = {
     }
 
     return 0;
+  },
+  end: function(regles)
+  {
+    // on arrête tous les joueurs dans le cas où l'arrêt vient du bouton d'arrêt
+    for(var i = 0; i < regles.joueurs.length; i++)
+    {
+      request.post('http://' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '/end', function (err, res, body) {
+        if(err)
+        {
+          console.log(err)
+        }
+        if(!err)
+        {
+          console.log('statusCode:', res.statusCode);
+          regles.joueurs[i].stop = true;
+        }
+      });
+    }
+
+    // on arrête tous les producteurs
+    for(var i = 0; i < regles.producteurs.length; i++)
+    {
+      request.post('http://' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '/end', function (err, res, body) {
+        if(err)
+          console.log(err)
+        if(!err)
+          console.log('statusCode:', res.statusCode);
+      });
+    }
   }
 };

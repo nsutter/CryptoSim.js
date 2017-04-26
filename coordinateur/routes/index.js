@@ -5,7 +5,6 @@ var router = express.Router();
 var SSH = require('simple-ssh');
 var data= require('../model/data');
 
-
 var coordinateur = require('../private/coordinateur');
 
 /*
@@ -16,7 +15,7 @@ etat = 2 -> phase de fin
 var etat = 0;
 
 var regles = {};
-var data= require('../model/data');
+var data = require('../model/data');
 
 /*
   cip = ip du coordinateur
@@ -29,45 +28,38 @@ function lance_ssh(ip, username, port, pass, producteur, cip, cport){
       pass: pass
   });
 
-// // EXEMPLE QUI MARCHE
-// ssh.exec('echo $PATH', {
-//     out: function(stdout) {
-//         console.log(stdout);
-//     }
-// }).start();
-
   ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
   }).start();
   ssh.exec('cd CryptoSim.js', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
   }).start();
   if(producteur == 1){
     ssh.exec('cd producteur', {
         out: function(stdout) {
-            console.log(stdout);
+          console.log(stdout);
         }
     }).start();
   }
   else {
     ssh.exec('cd joueur', {
         out: function(stdout) {
-            console.log(stdout);
+          console.log(stdout);
         }
     }).start();
   }
   ssh.exec('npm install', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
   }).start();
   ssh.exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + 'npm start &', {
       out: function(stdout) {
-          console.log(stdout);
+        console.log(stdout);
       }
   }).start();
   ssh.end();
@@ -84,10 +76,6 @@ router.get('/', function(req, res, next) {
   else if(etat == 1) // phase d'inscription
   {
     res.redirect('/inscription');
-  }
-  else if(etat == 2) // phase de fin
-  {
-    res.redirect('/fin');
   }
 });
 
@@ -147,7 +135,6 @@ router.post('/regles', function(req, res, next) {
 
   if(req.body.joueur_ip.constructor === Array)
   {
-    console.log('JOUEUR Array');
     for(var i = 0; i < req.body.joueur_ip.length; i++)
     {
       regles.joueurs.push({ip: req.body.joueur_ip[i], port: parseInt(req.body.joueur_port[i]), identifiant: req.body.joueur_id[i], pass: req.body.joueur_pass[i], inscription: false});
@@ -156,8 +143,6 @@ router.post('/regles', function(req, res, next) {
   }
   else
   {
-    console.log('JOUEUR !Array');
-    // stratégie en double ??
     regles.joueurs.push({ip: req.body.joueur_ip, port: parseInt(req.body.joueur_port), identifiant: req.body.joueur_id, pass: req.body.joueur_pass, inscription: false});
     regles.joueursParametres.push({strategie: req.body.joueur_strategie});
   }
@@ -168,8 +153,6 @@ router.post('/regles', function(req, res, next) {
 
   if(req.body.producteur_ip.constructor === Array)
   {
-    console.log('PRODUCTEUR Array');
-
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
       regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), identifiant: req.body.producteur_id[i], pass: req.body.producteur_pass[i], inscription: false});
@@ -178,9 +161,6 @@ router.post('/regles', function(req, res, next) {
   }
   else
   {
-  console.log('PRODUCTEUR !Array');
-
-    // certains paramètres en double ?
     regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
     regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)});
   }
@@ -226,7 +206,7 @@ router.post('/regles', function(req, res, next) {
 
 // Inscription des agents
 router.get('/inscription', function(req, res, next) {
-  if(etat == 1) // phase d'inscription - OK
+  if(etat == 1 || etat == 2) // phase d'inscription - OK
   {
     var nJoueurs = 0, nProducteurs = 0;
 
@@ -241,12 +221,6 @@ router.get('/inscription', function(req, res, next) {
         nProducteurs++;
     }
 
-    if(nJoueurs == 0 && nProducteurs == 0)
-    {
-      console.log('\n\n' + JSON.stringify(regles.joueurs) + '\n\n');
-      console.log('\n\n' + JSON.stringify(regles.producteurs) + '\n\n');
-    }
-
     data.find({}, function (err, data) {
       console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
@@ -256,21 +230,14 @@ router.get('/inscription', function(req, res, next) {
   {
     res.redirect('/');
   }
-  else if(etat == 2) // phase de fin
-  {
-    res.redirect('/fin');
-  }
 });
 
 router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
-
-  console.log('\n\nTentative : ' + req.params.ip + req.params.port);
 
   if(regles.producteursParametres && regles.producteursParametres.length > 0)
   {
     for(var i = 0; i < regles.producteurs.length; i++)
     {
-      // console.log(regles.producteurs[i].ip + '-' + req.params.ip + '-' + regles.producteurs[i].port + '-' + req.params.port);
       if(regles.producteurs[i].ip == req.params.ip && regles.producteurs[i].port == req.params.port)
       {
         // on copie les 1ers paramètres en attente
@@ -278,10 +245,8 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
         regles.producteurs[i].quantite = regles.producteursParametres[0].quantite;
         regles.producteurs[i].quantite_produite = regles.producteursParametres[0].quantite_produite;
 
-        console.log('avant: ' + JSON.stringify(regles.producteursParametres))
         // on supprime les paramètres copiés
         regles.producteursParametres.splice(0, 1);
-        console.log('apres: ' + JSON.stringify(regles.producteursParametres))
 
         // on valide l'inscription
         regles.producteurs[i].inscription = true;
@@ -385,32 +350,41 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
   }
 });
 
-router.get('/stop/:ip/:port', function(req, res, next) {
-  console.log(req.params.ip + ':' + req.params.port + ' a terminé.');
-
-  // arrêter tous les autres agents
-
-  // récupérer tous les logs
-
-  etat == 2;
-
-  res.redirect('/fin');
+router.get('/stop', function(req, res, next) {
+  etat = 2;
+  regles.dateFin = new Date();
+  coordinateur.end(regles);
+  res.end();
+  return;
 });
 
-// Fin de partie (affichage des scores, des graphiques, ...)
-router.get('/fin', function(req, res, next) {
-  if(etat == 2) // phase de fin - OK
+router.get('/stop/:ip/:port', function(req, res, next) {
+  console.log(req.params.ip + ':' + req.params.port + ' fini');
+
+  // on compte le joueur comme ayant terminé
+  for(var i = 0; i < regles.joueurs.length; i++)
   {
-    res.render('fin', {title: 'Fin du jeu'});
+    if(regles.joueurs[i].ip == req.params.ip && regles.joueurs[i].port == req.params.port)
+    {
+      regles.joueurs[i].stop = true;
+    }
   }
-  else if(etat == 0) // phase de paramètrage
+
+  // on vérifie si tous les jours ont terminé
+  for(var i = 0; i < regles.joueurs.length; i++)
   {
-    res.redirect('/');
+    if(!regles.joueurs[i].stop)
+    {
+      res.end();
+      return;
+    }
   }
-  else if(etat == 1) // phase d'inscription
-  {
-    res.redirect('/inscription');
-  }
+
+  etat = 2;
+  regles.dateFin = new Date();
+  coordinateur.end(regles);
+  res.end();
+  return;
 });
 
 // Remise à zéro de l'état et des règles et retour au paramétrage des règles et des agents

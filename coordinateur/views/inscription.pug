@@ -1,19 +1,27 @@
 extends layout
 
 block content
-  meta(http-equiv='refresh', content='0.5')
 
-  if(regles.dateDebut)
+  if regles.dateFin
+    h1 Tableau des scores
+      | &nbsp;
+    span.glyphicon.glyphicon-time
+    | &nbsp;Date de début : #{regles.dateDebut}
+    br
+    span.glyphicon.glyphicon-time
+    | &nbsp;Date de fin : #{regles.dateFin}
+  else if regles.dateDebut
+    meta(http-equiv='refresh', content='0.5')
     h1 En cours d'exécution...
       | &nbsp;
-      a.btn.btn-info(href='/arret') Arrêter la partie
+      a.btn.btn-info(href='/stop') Arrêter la partie
     span.glyphicon.glyphicon-time
     | &nbsp;Date de début : #{regles.dateDebut}
   else
+    meta(http-equiv='refresh', content='0.5')
     h1 Préparation du jeu 2/2 - Inscription des agents
       | &nbsp;
       a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
-
 
   if nJoueurs == 0 && nProducteurs == 0
     #graphique(style="width: 800px; height: 500px;")
