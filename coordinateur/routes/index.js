@@ -1,7 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var SSH = require('simple-ssh');
+var data= require('../model/data');
 
+data.remove({}, function(err,removed) {
+});
 
 var coordinateur = require('../private/coordinateur');
 /*
@@ -12,6 +15,7 @@ etat = 2 -> phase de fin
 var etat = 0;
 
 var regles = {};
+var data= require('../model/data');
 
 function lance_ssh(ip, username, port, pass, producteur){
   var ssh = new SSH({
@@ -62,6 +66,8 @@ function lance_ssh(ip, username, port, pass, producteur){
 router.get('/', function(req, res, next) {
   if(etat == 0) // phase de paramètrage - OK
   {
+    data.remove({}, function(err,removed) {
+    });
     res.render('index', {title: 'Préparation du jeu 1/2 - Paramétrage des règles et des agents'});
   }
   else if(etat == 1) // phase d'inscription
