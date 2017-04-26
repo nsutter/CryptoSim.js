@@ -5,5 +5,5 @@ module.exports = mongoose.model('Data', {
   port: String,
   partie: String,
   ressources: [],
-	date: Date
+	date: Number
 });
