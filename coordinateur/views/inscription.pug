@@ -14,50 +14,67 @@ block content
       | &nbsp;
       a.btn.btn-info(href='/annulation') Revenir au paramétrage des règles et des agents
 
-  h2 #{nJoueurs} joueur(s) en attente
-  table.table.table-bordered
-    tr
-      th Adresse IP
-      th Port
-      th Stratégie
-    - var i = 0
-    while i < regles.joueurs.length
-      if regles.joueurs[i].inscription
-        tr.success
-          td #{regles.joueurs[i].ip}
-          td #{regles.joueurs[i].port}
-          td #{regles.joueurs[i].strategie}
-      else
-        tr.danger
-          td #{regles.joueurs[i].ip}
-          td #{regles.joueurs[i].port}
-          td /
+  if nJoueurs == 0 && nProducteurs == 0
+    #graphique(style="width: 480px; height: 400px;")
+      script.
+        var trace1 = {
+          x: [1, 2, 3, 4],
+          y: [10, 15, 13, 17],
+          type: 'scatter'
+        };
+        var trace2 = {
+          x: [1, 2, 3, 4],
+          y: [16, 5, 11, 9],
+          type: 'scatter'
+        };
+        var data = [trace1, trace2];
+        Plotly.newPlot('graphique', data);
 
-      - i = i + 1
+  if nJoueurs != 0 || nProducteurs != 0
+    h2 #{nJoueurs} joueur(s) en attente
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Stratégie
+      - var i = 0
+      while i < regles.joueurs.length
+        if regles.joueurs[i].inscription
+          tr.success
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td #{regles.joueurs[i].strategie}
+        else
+          tr.danger
+            td #{regles.joueurs[i].ip}
+            td #{regles.joueurs[i].port}
+            td /
 
-  h2 #{nProducteurs} producteur(s) en attente
-  table.table.table-bordered
-    tr
-      th Adresse IP
-      th Port
-      th Ressource
-      th Quantité initiale
-      th Quantité produite
-    - var i = 0
-    while i < regles.producteurs.length
-      if regles.producteurs[i].inscription
-        tr.success
-          td #{regles.producteurs[i].ip}
-          td #{regles.producteurs[i].port}
-          td #{regles.producteurs[i].ressource}
-          td #{regles.producteurs[i].quantite}
-          td #{regles.producteurs[i].quantite_produite}
-      else
-        tr.danger
-          td #{regles.producteurs[i].ip}
-          td #{regles.producteurs[i].port}
-          td /
-          td /
-          td /
+        - i = i + 1
 
-      - i = i + 1
+    h2 #{nProducteurs} producteur(s) en attente
+    table.table.table-bordered
+      tr
+        th Adresse IP
+        th Port
+        th Ressource
+        th Quantité initiale
+        th Quantité produite
+      - var i = 0
+      while i < regles.producteurs.length
+        if regles.producteurs[i].inscription
+          tr.success
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td #{regles.producteurs[i].ressource}
+            td #{regles.producteurs[i].quantite}
+            td #{regles.producteurs[i].quantite_produite}
+        else
+          tr.danger
+            td #{regles.producteurs[i].ip}
+            td #{regles.producteurs[i].port}
+            td /
+            td /
+            td /
+
+        - i = i + 1

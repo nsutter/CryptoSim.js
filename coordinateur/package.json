@@ -14,6 +14,7 @@
     "pug": "~2.0.0-beta6",
     "serve-favicon": "~2.3.0",
     "request": "2.81.0",
+    "mongoose": "^4.8.1",
     "simple-ssh": "0.8.7"
   }
 }

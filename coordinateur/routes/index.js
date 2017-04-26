@@ -3,6 +3,7 @@ var sys = require('sys');
 var exec = require('child_process').exec;
 var router = express.Router();
 var SSH = require('simple-ssh');
+var data= require('../model/data');
 
 
 var coordinateur = require('../private/coordinateur');
@@ -14,6 +15,7 @@ etat = 2 -> phase de fin
 var etat = 0;
 
 var regles = {};
+var data= require('../model/data');
 
 /*
   cip = ip du coordinateur
@@ -21,74 +23,61 @@ var regles = {};
 */
 function lance_ssh(ip, username, port, pass, producteur, cip, cport){
   var ssh = new SSH({
-    host: ip,
-    user: username,
-    pass: pass
-});
+      host: ip,
+      user: username,
+      pass: pass
+  });
 
-// EXEMPLE QUI MARCHE
-ssh.exec('echo $PATH', {
-    out: function(stdout) {
-        console.log(stdout);
-    }
-}).start();
+// // EXEMPLE QUI MARCHE
+// ssh.exec('echo $PATH', {
+//     out: function(stdout) {
+//         console.log(stdout);
+//     }
+// }).start();
 
-  // console.log("Debut ssh");
-  // var ssh = new SSH({
-  //   host: ip,
-  //   user: username,
-  //   pass: pass,
-  // });
-  // ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   },
-  //   err: function(stderr) {
-  //     console.log(stderr); // this-does-not-exist: command not found
-  //   }
-  // })
-  // .exec('cd CryptoSim.js', {
-  //   out: function(stdout) {
-  //       console.log(stdout);
-  //   }
-  // }).start()
-  //
-  // if(producteur == 1){
-  //   ssh.exec('cd producteur', {
-  //     out: function(stdout) {
-  //       console.log(stdout);
-  //     }
-  //   })
-  // }
-  // else {
-  //   ssh.exec('cd joueur', {
-  //     out: function(stdout) {
-  //       console.log(stdout);
-  //     }
-  //   })
-  // }
-  // console.log("ok");
-  //
-  // ssh.exec('npm install', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   }
-  // })
-  //
-  // .exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + npm start &', {
-  //   out: function(stdout) {
-  //     console.log(stdout);
-  //   }
-  // })
-  // .start();
-  // ssh.end();
+  ssh.exec('git clone https://github.com/nsutter/CryptoSim.js.git', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.exec('cd CryptoSim.js', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  if(producteur == 1){
+    ssh.exec('cd producteur', {
+        out: function(stdout) {
+            console.log(stdout);
+        }
+    }).start();
+  }
+  else {
+    ssh.exec('cd joueur', {
+        out: function(stdout) {
+            console.log(stdout);
+        }
+    }).start();
+  }
+  ssh.exec('npm install', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + 'npm start &', {
+      out: function(stdout) {
+          console.log(stdout);
+      }
+  }).start();
+  ssh.end();
 }
-
 
 // Paramétrage des règles et des agents
 router.get('/', function(req, res, next) {
   if(etat == 0) // phase de paramètrage - OK
   {
+    data.remove({}, function(err,removed) {
+    });
     res.render('index', {title: 'Préparation du jeu 1/2 - Paramétrage des règles et des agents'});
   }
   else if(etat == 1) // phase d'inscription

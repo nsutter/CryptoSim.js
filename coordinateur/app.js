@@ -9,6 +9,12 @@ var index = require('./routes/index');
 
 var app = express();
 
+
+var dbConfig = require('./db');
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect(dbConfig.url);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
