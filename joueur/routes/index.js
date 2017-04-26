@@ -80,7 +80,12 @@ function update()
   }
   console.log(param.objectif);
   var TimeInMS = new Date().getTime();
-  var newData = new data({joueur: param.ip + param.port, date: TimeInMS, ressources: param.objectif[0].quantite});
+  var i;
+  var r= [];
+  for(i=0; i<param.objectif.length; i++){
+    r.push(param.objectif[i].quantite);
+  }
+  var newData = new data({joueur: param.ip + param.port, date: TimeInMS, ressources: r});
   newData.save();
 
   // vérification s'il a réussi ses objectifs

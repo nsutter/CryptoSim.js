@@ -18,30 +18,36 @@ block content
   if nJoueurs == 0 && nProducteurs == 0
     #graphique(style="width: 800px; height: 500px;")
       script.
-        console.log(data);
         var dt= !{JSON.stringify(data)};
-        var data= [];
-        var i, k;
+        var dataGraph= [];
+        var i=0, k=0;
         var tab=[];
         var tab2= [];
-        current= dt[0].joueur;
-        for(i=0; dt.joueur == current; i++)
+        var next= dt[i].joueur;
+        var current= dt[i].joueur;
+        while(i<dt.length && next == current)
         {
           current= dt[i].joueur;
-          tab2.push([]);
+          tab.push(dt[i].date);
           for(var j=0; j<dt[i].ressources.length; j++)
           {
-            tab.push(dt[i].date);
+            tab2.push([]);
             tab2[j][i] = (dt[i].ressources[j]);
           }
+          i= i+1;
+          if(i < dt.length)
+            next= dt[i].joueur;
         }
-        var trace1 = {
-          x: tab,
-          y: tab2[0],
-          type: 'scatter'
-        };
-        data.push(trace1);
-        Plotly.newPlot('graphique', data);
+        for(j=0; j<dt[0].ressources.length; j++)
+        {
+          var trace1 = {
+            x: tab,
+            y: tab2[j],
+            type: 'scatter'
+          };
+          dataGraph.push(trace1);
+        }
+        Plotly.newPlot('graphique', dataGraph);
 
   if nJoueurs != 0 || nProducteurs != 0
     h2 #{nJoueurs} joueur(s) en attente
