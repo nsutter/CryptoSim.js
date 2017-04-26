@@ -2,39 +2,31 @@ var request = require('request');
 
 module.exports = {
   /*
-    cible = le couple IP/port de la cible
-    type_cible = producteur/joueur
-    type_observation = ressources/strategie
-    /!\ le traitement de l'observation N'EST PAS effectué dans la fonction
-    TODO : CALLBACK
+    passe en mode observation et met le résultat de l'observation dans cibles
   */
-  observer: function(param, cible, type_cible, type_observation)
+  observer: function(param, agents, cibles)
   {
+    // si on a pas le droit d'observer, on s'arrête
     if(!param.observer)
-      return {success: false};
+      return 0;
 
-    var adresse;
+    param.observation = true;
 
-    // construction de l'adresse
-    if(type_cible == 'joueur' && type_observation == 'strategie') // observation de la stratégie sur  unjoueur
+    // on effectue une requête sur chaque agent pour récupérer ses informations
+    for(var i = 0; i < agents.joueurs.length; i++)
     {
-      adresse = 'http://' + cible.ip + ':' + cible.port + '/show_strategie';
-    }
-    else // observation de(s) ressource(s) sur un joueur/producteur
-    {
-      adresse = 'http://' + cible.ip + ':' + cible.port + '/show_ressource';
-    }
+      request.get('http://' + agents.joueurs[i].ip + ':' + agents.joueurs[i].port + '/show_ressource', function(err, res, body){
+        var resultat = JSON.parse(body);
 
-    // requête
-    request.get(adresse, function(err, res, body){
-
-      // CALLBACK
-      return JSON.parse(body);
-    });
+        if(resultat.success) // si on obtient des informations correctes, on les ajoute à un tableau qui sera réutilisé
+        {
+          cibles.push({ip: agents.joueurs[i].ip, port: agents.joueurs[i].port, objectif: resultat.objectif});
+        }
+      });
+    }
   },
   /*
-    renvoie la quantité volée de la ressource volée à la cible
-    /!\ le traitement du vol EST effectué dans la fonction
+    vole quantiteVolee unité de ressourceVolee à cible
   */
   voler: function(param, ressourceVolee, quantiteVolee, cible)
   {
@@ -48,7 +40,13 @@ module.exports = {
 
       if(body.success) // mise à jour des objectifs
       {
-        // param.objectif[ressourceVolee] += resultat.quantiteVolee;
+        for(var i = 0; i < param.objectif.length; i++)
+        {
+          if(param.objectif[i].nom == ressourceVolee)
+          {
+            param.objectif[i].quantite += resultat.quantiteVolee;
+          }
+        }
       }
 
       return;
@@ -56,13 +54,17 @@ module.exports = {
   },
   /*
     renvoie la quantité volée de la ressource volée
-    TODO : seuil maximum de quantité volée
   */
   se_faire_voler: function(param, ressourceVolee, quantiteVolee){
 
     // si on a pas le droit de se faire voler, on s'arrête
     if(!param.voler)
       return 0;
+
+    if(quantiteVolee > param.Nressources)
+    {
+      quantiteVolee = param.Nressources;
+    }
 
     for(var i = 0; i < param.objectif.length; i++)
     {
@@ -172,9 +174,18 @@ module.exports = {
     IA voleuse
     - cherche à atteindre ses objectifs en volant les autres joueurs
   */
-  voleur: function(param, agents)
+  voleur: function(param, agents, cibles)
   {
-    // TODO : code du voleur
+    if(param.action) // voler
+    {
+      param.action = false;
+
+    }
+    else // observation
+    {
+      param.action = true;
+      observer(param, agents, cibles);
+    }
   },
   /*
     IA paranoiaque
@@ -186,7 +197,7 @@ module.exports = {
     if(param.action)
     {
       param.action = false;
-      // TODO : se mettre en observation
+      observer();
     }
     else
     {

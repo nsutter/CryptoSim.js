@@ -8,11 +8,14 @@ var data= require('../model/data');
 
 var param = {};
 var agents = {};
+param.coordinateur = {};
+param.coordinateur.ip = process.env.CIP;
+param.coordinateur.port = process.env.CPORT;
 
 // récupération de paramètres du joueur
 // TODO : adresse du coordinateur et du joueur dynamique (lancé avec le script)
 console.log('Téléchargement des paramètres...')
-request('http://localhost:1337/joueur/inscription/localhost/2001', function (error, response, body) {
+request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/joueur/inscription/localhost/2001', function (error, response, body) {
   if(response){
     param = JSON.parse(body);
 
@@ -22,6 +25,11 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
     }
 
     console.log('Initialisation de la stratégie...')
+    if(param.observer)
+    {
+      param.observation = false;
+    }
+
     if(param.strategie == 'voleur')
     {
       param.action = false;
@@ -46,6 +54,9 @@ request('http://localhost:1337/joueur/inscription/localhost/2001', function (err
 
 function update()
 {
+  // on sort du mode observation si on y était
+  param.observation = false;
+
   // action du joueur en fonction de sa stratégie
   if(param.strategie == 'cooperatif')
   {
