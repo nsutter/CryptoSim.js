@@ -20,11 +20,14 @@ block content
       script.
         console.log(data);
         var dt= !{JSON.stringify(data)};
-        var i;
+        var data= [];
+        var i, k;
         var tab=[];
         var tab2= [];
-        for(i=0; i<dt.length; i++)
+        current= dt[0].joueur;
+        for(i=0; dt.joueur == current; i++)
         {
+          current= dt[i].joueur;
           tab2.push([]);
           for(var j=0; j<dt[i].ressources.length; j++)
           {
@@ -32,13 +35,12 @@ block content
             tab2[j][i] = (dt[i].ressources[j]);
           }
         }
-        console.log(tab2);
         var trace1 = {
           x: tab,
           y: tab2[0],
           type: 'scatter'
         };
-        var data = [trace1];
+        data.push(trace1);
         Plotly.newPlot('graphique', data);
 
   if nJoueurs != 0 || nProducteurs != 0
