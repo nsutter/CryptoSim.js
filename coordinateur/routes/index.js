@@ -3,8 +3,6 @@ var router = express.Router();
 var SSH = require('simple-ssh');
 var data= require('../model/data');
 
-data.remove({}, function(err,removed) {
-});
 
 var coordinateur = require('../private/coordinateur');
 /*
