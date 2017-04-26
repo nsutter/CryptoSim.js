@@ -1,5 +1,5 @@
 var express = require('express');
-var sys = require('sys');
+var sys = require('util');
 var exec = require('child_process').exec;
 var router = express.Router();
 var SSH = require('simple-ssh');
