@@ -30,16 +30,15 @@ block content
       - num = num +1
     script.
       var dt= !{JSON.stringify(data)};
-      var dataGraph;
+      var dataGraph= [];
       var i=0, k=0, l=0;
       var tab;
       var tab2;
-      for(k=0; k<dt.length;)
+      for(k=0; k+1<dt.length;)
       {
         l= l+1;
         tab=[];
         tab2= [];
-        dataGraph= [];
         var next= dt[k].joueur;
         var current= dt[k].joueur;
         i=0;
@@ -54,9 +53,10 @@ block content
           }
           i= i+1;
           k= k+1;
-          if(i < dt.length)
-            next= dt[i].joueur;
+          if(k < dt.length)
+            next= dt[k].joueur;
         }
+        dataGraph.push([]);
         for(j=0; j<dt[0].ressources.length; j++)
         {
           var trace1 = {
@@ -64,9 +64,9 @@ block content
             y: tab2[j],
             type: 'scatter'
           };
-          dataGraph.push(trace1);
+          dataGraph[l-1].push(trace1);
         }
-        Plotly.newPlot('c'+l, dataGraph);
+        Plotly.newPlot('c'+l, dataGraph[l-1]);
       }
 
   if nJoueurs != 0 || nProducteurs != 0
