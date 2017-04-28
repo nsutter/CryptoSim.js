@@ -164,7 +164,13 @@ module.exports = {
           {
             // requête de récupération de ressource chez le producteur choisi
             request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
-              // TODO : mettre à jour
+              for(var k = 0; k < param.objectif.length; k++)
+              {
+                if(param.objectif[k].nom == param.objectif[i].nom)
+                {
+                  param.objectif[k].quantite += parseInt(body);
+                }
+              }
             });
 
             return;
