@@ -156,7 +156,7 @@ router.post('/regles', function(req, res, next) {
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
       var proportionnel;
-      if(req.body.producteur_epuisement[i])
+      if(req.body.producteur_epuisement && req.body.producteur_epuisement[i])
       {
         proportionnel = true;
       }
