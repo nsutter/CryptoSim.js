@@ -26,8 +26,6 @@ module.exports = {
       request.post('http://' + regles.producteurs[i].ip + ':' + regles.producteurs[i].port + '/start', function (err1, res1, body1) {
         if(err1)
           console.log(err1)
-        if(!err1)
-          console.log('statusCode:', res1.statusCode);
       });
     }
 
@@ -37,8 +35,6 @@ module.exports = {
       request.post('http://' + regles.joueurs[i].ip + ':' + regles.joueurs[i].port + '/start', {form: {agents: JSON.stringify(agents)}}, function (err2, res2, body2) {
         if(err2)
           console.log(err2)
-        if(!err2)
-          console.log('statusCode:', res2.statusCode);
       });
     }
 

@@ -33,7 +33,7 @@ var quantite = param.quantite;
 
 function update()
 {
-  if(param.proportionnel == 'o') {
+  if(param.proportionnel) {
     param.quantite = parseInt(param.quantite) + parseInt(param.quantite)/2 + 1;
   }
   else {
