@@ -30,8 +30,7 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
     if(param.strategie == 'voleur')
     {
       param.action = false;
-
-      // TODO : réfléchir au voleur..
+      agents.cibles = [];
     }
     else if(param.strategie == 'paranoiaque')
     {
@@ -70,7 +69,7 @@ function update()
   }
   else if(param.strategie == 'voleur')
   {
-    joueur.voleur(param, agents);
+    joueur.voleur(param, agents, agents.cibles);
   }
   else if(param.strategie == 'paranoiaque')
   {
