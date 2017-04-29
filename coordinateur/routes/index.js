@@ -156,13 +156,13 @@ router.post('/regles', function(req, res, next) {
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
       regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), identifiant: req.body.producteur_id[i], pass: req.body.producteur_pass[i], inscription: false});
-      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite : parseInt(req.body.producteur_quantite_produite[i])});
+      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite: parseInt(req.body.producteur_quantite_produite[i]), proportionnel: req.body.producteur_epuisement[i]});
     }
   }
   else
   {
     regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
-    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)});
+    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite: parseInt(req.body.producteur_quantite_produite), proportionnel: req.body.producteur_epuisement});
   }
 
   console.log(regles);

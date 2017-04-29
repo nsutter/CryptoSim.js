@@ -89,11 +89,11 @@ block content
             option(value='paranoiaque') Paranoïaque
           | &nbsp;
           .form-group
-            .sr-only(for='joueur_id') Port
+            .sr-only(for='joueur_id') Identifiant
             input.form-control(type='text', id='joueur_id', name='joueur_id', placeholder='Identifiant')
           | &nbsp;
           .form-group
-            .sr-only(for='joueur_pass') Port
+            .sr-only(for='joueur_pass') Mot de passe
             input.form-control(type='password', id='joueur_pass', name='joueur_pass', placeholder='Mot de passe')
           | &nbsp;
           button.btn.btn-danger(data-role='remove')
@@ -132,11 +132,17 @@ block content
             input.form-control(type='text', id='producteur_quantite_produite', name='producteur_quantite_produite', placeholder='Quantité produite', required)
           | &nbsp;
           .form-group
-            .sr-only(for='producteur_id') Port
+            .sr-only(for='producteur_epuisement') Épuisement des ressources
+            input.form-control(type='checkbox', id='producteur_epuisement', name='producteur_epuisement')
+            | &nbsp;Épuisement des ressources
+          | &nbsp;
+          br
+          .form-group
+            .sr-only(for='producteur_id') Identifiant
             input.form-control(type='text', id='producteur_id', name='producteur_id', placeholder='Identifiant')
           | &nbsp;
           .form-group
-            .sr-only(for='producteur_pass') Port
+            .sr-only(for='producteur_pass') Mot de passe
             input.form-control(type='password', id='producteur_pass', name='producteur_pass', placeholder='Mot de passe')
           | &nbsp;
           button.btn.btn-danger(data-role='remove')

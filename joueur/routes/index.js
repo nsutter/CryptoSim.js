@@ -98,11 +98,11 @@ router.post('/start', function(req, res, next) {
   console.log('Récupération des autres agents...');
   agents = JSON.parse(req.body.agents)
   console.log(agents);
-  console.log('Démarrage du joueur...');
-  // TODO : le joueur avec ses actions
-  res.end();
 
-  setInterval(update, 1000); // chaque seconde
+  console.log('Démarrage du joueur...');
+  setInterval(update, 1000); // une action chaque seconde
+
+  res.end();
 });
 
 // observation des ressources
