@@ -373,9 +373,10 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
   }
 });
 
+// Arrêt manuel en appuyant sur le bouton "Arrêter la partie" sur le coordinateur
 router.get('/stop', function(req, res, next) {
   etat = 2;
-  regles.dateFin = new Date();
+  regles.dateFin = new Date(); // on enregistre la date de fin
   coordinateur.end(regles);
   res.end();
   return;
@@ -399,12 +400,13 @@ router.get('/stop/:ip/:port', function(req, res, next) {
     if(!regles.joueurs[i].stop)
     {
       res.end();
-      return;
+      return; // si c'est pas le cas, on fait rien
     }
   }
 
+  // si c'est le cas, on arrête les agents et on passe à la phase suivante
   etat = 2;
-  regles.dateFin = new Date();
+  regles.dateFin = new Date(); // on enregistre la date de fin
   coordinateur.end(regles);
   res.end();
   return;

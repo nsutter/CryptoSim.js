@@ -55,6 +55,10 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
 
 function update()
 {
+  // si on a fini, on n'effectue aucune action
+  if(param.stop)
+    return;
+
   // on sort du mode observation si on y était
   param.observation = false;
 
