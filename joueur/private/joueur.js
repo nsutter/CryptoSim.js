@@ -22,13 +22,25 @@ module.exports = {
         {
           cibles.push({ip: agents.joueurs[i].ip, port: agents.joueurs[i].port, objectif: resultat.objectif});
         }
+        else if(resultat.raison && resultat.raison == 'stop')
+        {
+          for(var i = 0; i < agents.joueurs.length; i++)
+          {
+            if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
+            {
+              agents.splice(i, 1); // on supprime l'agent qui a arrêté
+
+              return;
+            }
+          }
+        }
       });
     }
   },
   /*
     vole quantiteVolee unité de ressourceVolee à cible
   */
-  voler: function(param, ressourceVolee, quantiteVolee, cible)
+  voler: function(param, agents, cible, ressourceVolee, quantiteVolee)
   {
     // si on a pas le droit de voler, on s'arrête
     if(!param.voler)
@@ -45,6 +57,18 @@ module.exports = {
           if(param.objectif[i].nom == ressourceVolee)
           {
             param.objectif[i].quantite += resultat.quantiteVolee;
+          }
+        }
+      }
+      else if(body.raison && body.raison == 'stop')
+      {
+        for(var i = 0; i < agents.joueurs.length; i++)
+        {
+          if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
+          {
+            agents.splice(i, 1); // on se supprime
+
+            return;
           }
         }
       }
@@ -164,7 +188,13 @@ module.exports = {
           {
             // requête de récupération de ressource chez le producteur choisi
             request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
-              // TODO : mettre à jour
+              for(var k = 0; k < param.objectif.length; k++)
+              {
+                if(param.objectif[k].nom == param.objectif[i].nom)
+                {
+                  param.objectif[k].quantite += parseInt(body);
+                }
+              }
             });
 
             return;
@@ -183,11 +213,51 @@ module.exports = {
     {
       param.action = false;
 
+      // on cherche la ressource où l'on est le moins avancé dans les objectifs
+      var ressourceLaMoinsAvancee, quantiteLaMoinsAvancee = 0;
+
+      for(var i = 0; i < param.objectif.length; i++)
+      {
+        if(param.objectif[i].quantite_demandee - param.objectif[i].quantite > quantiteLaMoinsAvancee)
+        {
+          quantiteLaMoinsAvancee = param.objectif[i].quantite_demandee - param.objectif[i].quantite;
+          ressourceLaMoinsAvancee = param.objectif[i].nom;
+        }
+      }
+
+      if(ressourceLaMoinsAvancee)
+      {
+        var qRessourceLaMoinsAvancee = 0, iRessourceLaMoinsAvancee = 0;
+
+        // on cherche un joueur qui possède cette ressource
+        for(var i = 0; i < cibles.length; i++)
+        {
+          for(var j = 0; j < cibles[i].objectif.length; j++)
+          {
+            if(cibles[i].objectif[j].nom == ressourceLaMoinsAvancee)
+            {
+              // et on prend celui qui possède le plus de cette ressource
+              if(cibles[i].objectif[j].quantite > qRessourceLaMoinsAvancee)
+              {
+                iRessourceLaMoinsAvancee = i;
+                qRessourceLaMoinsAvancee = cibles[i].objectif[j].quantite;
+              }
+            }
+          }
+        }
+
+        // ensuite si on a trouvé quelqu'un on le vole
+        if(iRessourceLaMoinsAvancee > 0)
+        {
+          joueur.voler(param, agents, cibles[i], ressourceLaMoinsAvancee, param.Nressources)
+        }
+        return;
+      }
     }
     else // observation
     {
       param.action = true;
-      observer(param, agents, cibles);
+      joueur.observer(param, agents, cibles);
     }
   },
   /*
@@ -200,7 +270,7 @@ module.exports = {
     if(param.action)
     {
       param.action = false;
-      observer();
+      joueur.observer(param, agents, cibles); // cibles est inutilisé
     }
     else
     {

@@ -155,14 +155,34 @@ router.post('/regles', function(req, res, next) {
   {
     for(var i = 0; i < req.body.producteur_ip.length; i++)
     {
+      var proportionnel;
+      if(req.body.producteur_epuisement && req.body.producteur_epuisement[i])
+      {
+        proportionnel = true;
+      }
+      else
+      {
+        proportionnel = false;
+      }
+
       regles.producteurs.push({ip: req.body.producteur_ip[i], port: parseInt(req.body.producteur_port[i]), identifiant: req.body.producteur_id[i], pass: req.body.producteur_pass[i], inscription: false});
-      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite : parseInt(req.body.producteur_quantite_produite[i])});
+      regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite[i], quantite: parseInt(req.body.producteur_quantite_initiale[i]), quantite_produite: parseInt(req.body.producteur_quantite_produite[i]), proportionnel: proportionnel});
     }
   }
   else
   {
+    var proportionnel;
+    if(req.body.producteur_epuisement)
+    {
+      proportionnel = true;
+    }
+    else
+    {
+      proportionnel = false;
+    }
+
     regles.producteurs.push({ip: req.body.producteur_ip, port: parseInt(req.body.producteur_port), identifiant: req.body.producteur_id, pass: req.body.producteur_pass, inscription: false});
-    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite : parseInt(req.body.producteur_quantite_produite)});
+    regles.producteursParametres.push({ressource: req.body.producteur_ressource_produite, quantite: parseInt(req.body.producteur_quantite_initiale), quantite_produite: parseInt(req.body.producteur_quantite_produite), proportionnel: proportionnel});
   }
 
   console.log(regles);
@@ -222,6 +242,7 @@ router.get('/inscription', function(req, res, next) {
     }
 
     data.find({}).sort({joueur: 1, date: 1}).exec(function (err, data) {
+      console.log("Base de données :");
       console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
     });
@@ -278,6 +299,7 @@ router.get('/producteur/inscription/:ip/:port', function(req, res, next) {
           regles.dateDebut = new Date();
           coordinateur.start(regles);
         }
+        return;
       }
     }
 
@@ -339,6 +361,7 @@ router.get('/joueur/inscription/:ip/:port', function(req, res, next) {
           regles.dateDebut = new Date();
           coordinateur.start(regles);
         }
+        return;
       }
     }
 
