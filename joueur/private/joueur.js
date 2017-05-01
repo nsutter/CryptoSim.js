@@ -211,6 +211,13 @@ module.exports = {
   {
     if(param.action) // voler
     {
+      // on vérifie d'abord s'il reste des agents à voler, sinon on passe en mode coopératif
+      if(agents.joueurs.length == 0)
+      {
+        cooperatif(param, agents);
+        return;
+      }
+
       param.action = false;
 
       // on cherche la ressource où l'on est le moins avancé dans les objectifs
