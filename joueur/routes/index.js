@@ -56,7 +56,7 @@ function update()
 {
   console.log("action");
 
-  // si on a fini, on n'effectue aucune action
+  // si on a fini, on n'effectue aucune action mais en reste en exécution 
   if(param.stop)
     return;
 
@@ -81,6 +81,7 @@ function update()
     joueur.paranoiaque(param, agents);
   }
 
+  // on enregistre les logs
   var TimeInMS = new Date().getTime();
   var i;
   var r= [];
