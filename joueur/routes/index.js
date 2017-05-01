@@ -76,11 +76,7 @@ function update()
   {
     joueur.paranoiaque(param, agents);
   }
-  var tab= [];
-  for(var i=0; i< param.objectif.length; i++){
-    tab.push(param.objectif[i].quantite);
-  }
-  console.log(param.objectif);
+
   var TimeInMS = new Date().getTime();
   var i;
   var r= [];
