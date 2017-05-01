@@ -22,11 +22,6 @@ request('http://' + param.coordinateur.ip + ':' + param.coordinateur.port + '/pr
     console.log('Téléchargement des paramètres...')
     console.log(param);
   }
-  else { // par défaut
-    param.ressource = "Ether";
-    param.quantite = 0;
-    param.quantite_produite = 5;
-  }
 });
 
 var quantite = param.quantite;
@@ -63,7 +58,7 @@ router.get('/get_ressource/:nb', function(req, res, next){
   }
   else {
     res.send(param.quantite + ""); // envoi du nombre brut
-    quantite = 0;
+    param.quantite = 0;
   }
 });
 
