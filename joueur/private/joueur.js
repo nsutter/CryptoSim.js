@@ -150,7 +150,7 @@ module.exports = {
   {
     // on cherche la ressource où l'on est le moins avancé dans les objectifs
     var ressourceLaMoinsAvancee, quantiteLaMoinsAvancee = 0;
-    console.log("objectif :" + param.objectif);
+
     for(var i = 0; i < param.objectif.length; i++)
     {
       if(param.objectif[i].quantite_demandee - param.objectif[i].quantite > quantiteLaMoinsAvancee)
@@ -160,6 +160,7 @@ module.exports = {
       }
     }
 
+    // si une ressource a été trouvée
     if(ressourceLaMoinsAvancee)
     {
       // on cherche un producteur qui produit cette ressource
@@ -174,7 +175,7 @@ module.exports = {
             {
               if(param.objectif[j].nom == ressourceLaMoinsAvancee)
               {
-                param.objectif[i].quantite += parseInt(body);
+                param.objectif[j].quantite += parseInt(body);
               }
             }
           });
