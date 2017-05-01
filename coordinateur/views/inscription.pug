@@ -11,7 +11,7 @@ block content
     span.glyphicon.glyphicon-time
     | &nbsp;Date de fin : #{regles.dateFin}
   else if regles.dateDebut
-    meta(http-equiv='refresh', content='0.5')
+    meta(http-equiv='refresh', content='1')
     h1 En cours d'exécution...
       | &nbsp;
       a.btn.btn-info(href='/stop') Arrêter la partie
@@ -25,11 +25,20 @@ block content
 
   if nJoueurs == 0 && nProducteurs == 0
     - var num=1
-    while num <= regles.joueurs.length
-      div(id= "c" + num, style="width: 800px; height: 400px;")
-      - num = num +1
+    .container-fluid
+      .row
+          while num <= regles.joueurs.length
+            .col-md-6.col-sm-6
+              div(id= "c" + num)
+                - num = num + 1
     script.
       var dt= !{JSON.stringify(data)};
+      var rg= !{JSON.stringify(regles)};
+      var min=dt[0].date;
+      for(var i=0; i< dt.length; i++){
+        if(dt[i].date< min)
+          min= dt[i].date;
+      }
       var dataGraph= [];
       var i=0, k=0, l=0;
       var tab;
@@ -45,7 +54,7 @@ block content
         while(k<dt.length && next == current)
         {
           current= dt[k].joueur;
-          tab.push(dt[k].date);
+          tab.push(dt[k].date - min);
           for(var j=0; j<dt[k].ressources.length; j++)
           {
             tab2.push([]);
@@ -62,11 +71,21 @@ block content
           var trace1 = {
             x: tab,
             y: tab2[j],
-            type: 'scatter'
+            type: 'scatter',
+            name: rg.objectif[j].nom
           };
           dataGraph[l-1].push(trace1);
         }
-        Plotly.newPlot('c'+l, dataGraph[l-1]);
+        var layout = {
+          title:'Joueur ' + current,
+          yaxis: {
+            title: "Nombre de ressources"
+          },
+          xaxis: {
+            title: "Temps en millisecondes depuis le debut"
+          }
+        };
+        Plotly.newPlot('c'+l, dataGraph[l-1], layout);
       }
 
   if nJoueurs != 0 || nProducteurs != 0

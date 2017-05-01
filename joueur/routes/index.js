@@ -30,7 +30,6 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
     if(param.strategie == 'voleur')
     {
       param.action = false;
-      agents.cibles = [];
     }
     else if(param.strategie == 'paranoiaque')
     {
@@ -55,6 +54,8 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
 
 function update()
 {
+  console.log("action");
+
   // si on a fini, on n'effectue aucune action
   if(param.stop)
     return;
@@ -96,7 +97,8 @@ function update()
 // lancement de la partie
 router.post('/start', function(req, res, next) {
   console.log('Récupération des autres agents...');
-  agents = JSON.parse(req.body.agents)
+  agents = JSON.parse(req.body.agents);
+  agents.cibles = [];
   console.log(agents);
 
   console.log('Démarrage du joueur...');
@@ -149,7 +151,7 @@ router.get('/voler/:ressourceVolee/:quantiteVolee', function(req, res, next) {
     res.send({success: false, raison: 'stop'})
   }
 
-  var quantiteVolee = joueur.se_faire_voler(req.params.ressource, req.params.quantiteVolee);
+  var quantiteVolee = joueur.se_faire_voler(req.params.ressourceVolee, req.params.quantiteVolee);
 
   res.json({success: true, quantiteVolee: quantiteVolee}); // un vol qui échoue renvoie 0
 });

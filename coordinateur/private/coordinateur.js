@@ -6,6 +6,8 @@ module.exports = {
   */
   start: function(regles){
 
+    console.log('Démarrage du jeu...');
+
     var agents = {}; // array des agents concurrents avec le minimum d'informations possibles pour les joueurs
     agents.producteurs = [];
     agents.joueurs = [];

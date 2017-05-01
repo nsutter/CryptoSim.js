@@ -1,80 +1,94 @@
 var request = require('request');
 
+function f_observer(param, agents, cibles)
+{
+  // si on a pas le droit d'observer, on s'arrête
+  if(!param.observer)
+    return 0;
+
+  param.observation = true;
+
+  // on effectue une requête sur chaque agent pour récupérer ses informations
+  for(var i = 0; i < agents.joueurs.length; i++)
+  {
+    var iInterne = i;
+    request.get('http://' + agents.joueurs[i].ip + ':' + agents.joueurs[i].port + '/show_ressource', function(err, res, body){
+      var resultat = JSON.parse(body);
+
+      if(resultat.success) // si on obtient des informations correctes, on les ajoute à un tableau qui sera réutilisé
+      {
+        cibles.push({ip: agents.joueurs[iInterne].ip, port: agents.joueurs[iInterne].port, objectif: resultat.objectif});
+      }
+      else if(resultat.raison && resultat.raison == 'stop') // si l'agent est arrêté, on le supprime en local
+      {
+        for(var j = 0; j < agents.joueurs.length; j++)
+        {
+          if(agents.joueurs[iInterne].ip == agents.joueurs[j].ip && agents.joueurs[iInterne].port == agents.joueurs[j].port)
+          {
+            agents.joueurs.splice(j, 1); // on supprime l'agent qui a arrêté
+
+            return;
+          }
+        }
+      }
+    });
+  }
+}
+
+function f_voler(param, agents, cible, ressourceVolee, quantiteVolee)
+{
+  // si on a pas le droit de voler, on s'arrête
+  if(!param.voler)
+    return;
+
+  // construction de l'adresse et requête
+  request.get('http://' + cible.ip + ':' + cible.port + '/voler/' + ressourceVolee + '/' + quantiteVolee, function(err, res, body){
+
+    var resultat = JSON.parse(body);
+
+    console.log(resultat);
+
+    if(resultat.success) // mise à jour des objectifs
+    {
+      for(var i = 0; i < param.objectif.length; i++)
+      {
+        if(param.objectif[i].nom == ressourceVolee)
+        {
+          param.objectif[i].quantite += resultat.quantiteVolee;
+        }
+      }
+    }
+    else if(resultat.raison && resultat.raison == 'stop')
+    {
+      for(var i = 0; i < agents.joueurs.length; i++)
+      {
+        if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
+        {
+          agents.splice(i, 1); // on se supprime
+
+          return;
+        }
+      }
+    }
+
+    return;
+  });
+}
+
 module.exports = {
   /*
     passe en mode observation et met le résultat de l'observation dans cibles
   */
   observer: function(param, agents, cibles)
   {
-    // si on a pas le droit d'observer, on s'arrête
-    if(!param.observer)
-      return 0;
-
-    param.observation = true;
-
-    // on effectue une requête sur chaque agent pour récupérer ses informations
-    for(var i = 0; i < agents.joueurs.length; i++)
-    {
-      request.get('http://' + agents.joueurs[i].ip + ':' + agents.joueurs[i].port + '/show_ressource', function(err, res, body){
-        var resultat = JSON.parse(body);
-
-        if(resultat.success) // si on obtient des informations correctes, on les ajoute à un tableau qui sera réutilisé
-        {
-          cibles.push({ip: agents.joueurs[i].ip, port: agents.joueurs[i].port, objectif: resultat.objectif});
-        }
-        else if(resultat.raison && resultat.raison == 'stop')
-        {
-          for(var i = 0; i < agents.joueurs.length; i++)
-          {
-            if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
-            {
-              agents.splice(i, 1); // on supprime l'agent qui a arrêté
-
-              return;
-            }
-          }
-        }
-      });
-    }
+    return f_observer(param, agents, cibles);
   },
   /*
     vole quantiteVolee unité de ressourceVolee à cible
   */
   voler: function(param, agents, cible, ressourceVolee, quantiteVolee)
   {
-    // si on a pas le droit de voler, on s'arrête
-    if(!param.voler)
-      return;
-
-    // construction de l'adresse et requête
-    request.get('http://' + cible.ip + ':' + cible.port + '/voler/ ' + ressourceVolee + '/' + quantiteVolee, function(err, res, body){
-      var resultat = JSON.parse(body);
-
-      if(body.success) // mise à jour des objectifs
-      {
-        for(var i = 0; i < param.objectif.length; i++)
-        {
-          if(param.objectif[i].nom == ressourceVolee)
-          {
-            param.objectif[i].quantite += resultat.quantiteVolee;
-          }
-        }
-      }
-      else if(body.raison && body.raison == 'stop')
-      {
-        for(var i = 0; i < agents.joueurs.length; i++)
-        {
-          if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
-          {
-            agents.splice(i, 1); // on se supprime
-
-            return;
-          }
-        }
-      }
-
-      return;
-    });
+    f_voler(param, agents, cible, ressourceVolee, quantiteVolee);
   },
   /*
     renvoie la quantité volée de la ressource volée
@@ -209,14 +223,18 @@ module.exports = {
   */
   voleur: function(param, agents, cibles)
   {
+    console.log("test 0 passé");
+
     if(param.action) // voler
     {
       // on vérifie d'abord s'il reste des agents à voler, sinon on passe en mode coopératif
       if(agents.joueurs.length == 0)
       {
-        cooperatif(param, agents);
+        f_cooperatif(param, agents);
         return;
       }
+
+      console.log("test 1 passé");
 
       param.action = false;
 
@@ -253,10 +271,13 @@ module.exports = {
           }
         }
 
+
+        console.log(cibles[iRessourceLaMoinsAvancee]);
+
         // ensuite si on a trouvé quelqu'un on le vole
         if(iRessourceLaMoinsAvancee > 0)
         {
-          joueur.voler(param, agents, cibles[i], ressourceLaMoinsAvancee, param.Nressources)
+          f_voler(param, agents, cibles[iRessourceLaMoinsAvancee], ressourceLaMoinsAvancee, param.Nressources);
         }
         return;
       }
@@ -264,7 +285,7 @@ module.exports = {
     else // observation
     {
       param.action = true;
-      joueur.observer(param, agents, cibles);
+      f_observer(param, agents, cibles);
     }
   },
   /*
@@ -277,12 +298,12 @@ module.exports = {
     if(param.action)
     {
       param.action = false;
-      joueur.observer(param, agents, cibles); // cibles est inutilisé
+      f_observer(param, agents, cibles); // cibles est inutilisé
     }
     else
     {
       param.action = true;
-      cooperatif(param, agents);
+      f_cooperatif(param, agents);
     }
   }
 };

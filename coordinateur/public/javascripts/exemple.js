@@ -29,6 +29,7 @@ function exemple2()
   $('[data-role="add"]').click();
 
   $('[name="voler"]').prop('checked', true);
+  $('[name="observer"]').prop('checked', true);
 
   $('[name="objectif_nom"]:eq(0)').val('Ether');
   $('[name="objectif_quantite"]:eq(0)').val(35);

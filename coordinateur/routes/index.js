@@ -51,18 +51,18 @@ function lance_ssh(ip, username, port, pass, producteur, cip, cport){
           console.log(stdout);
         }
     }).start();
-  }
-  ssh.exec('npm install', {
-      out: function(stdout) {
-        console.log(stdout);
-      }
-  }).start();
-  ssh.exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + 'npm start &', {
-      out: function(stdout) {
-        console.log(stdout);
-      }
-  }).start();
-  ssh.end();
+    }
+    ssh.exec('npm install', {
+        out: function(stdout) {
+          console.log(stdout);
+        }
+    }).start();
+    ssh.exec('PORT=' + port + ' CIP=' + cip + ' CPORT=' + cport + 'npm start &', {
+        out: function(stdout) {
+          console.log(stdout);
+        }
+    }).start();
+    ssh.end();
 }
 
 // Paramétrage des règles et des agents
@@ -243,7 +243,7 @@ router.get('/inscription', function(req, res, next) {
 
     data.find({}).sort({joueur: 1, date: 1}).exec(function (err, data) {
       console.log("Base de données :");
-      console.log(data);
+      // console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
     });
   }
