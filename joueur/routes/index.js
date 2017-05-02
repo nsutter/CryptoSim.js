@@ -38,12 +38,6 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
 
     console.log(param);
   }
-  else { // par défaut
-    param.strategie = 'cooperatif';
-    param.voler = false;
-    param.observer = false;
-    param.Nressources = 10;
-  }
 
   param.coordinateur = {};
   param.coordinateur.ip = process.env.CIP;
@@ -54,9 +48,7 @@ request('http://' + process.env.CIP + ':' + process.env.CPORT + '/joueur/inscrip
 
 function update()
 {
-  console.log("action");
-
-  // si on a fini, on n'effectue aucune action mais en reste en exécution 
+  // si on a fini, on n'effectue aucune action mais en reste en exécution
   if(param.stop)
     return;
 
@@ -118,6 +110,8 @@ router.get('/show_ressource', function(req, res, next) {
   if(param.observer)
   {
     var resultat = {};
+    resultat.ip = param.ip;
+    resultat.port = param.port;
     resultat.success = true;
     resultat.objectif = param.objectif;
     res.send(resultat);
@@ -132,12 +126,12 @@ router.get('/show_ressource', function(req, res, next) {
 router.get('/show_strategie', function(req, res, next) {
   if(param.stop) // si le joueur a fini, on transmet au client qu'on a fini
   {
-    res.send({success: false, raison: 'stop'})
+    res.send({success: false, ip: param.ip, port: param.port, raison: 'stop'});
   }
 
   if(param.observer)
   {
-    res.send({success: true, strategie: param.strategie});
+    res.send({success: true, ip: param.ip, port: param.port, strategie: param.strategie});
   }
   else
   {
@@ -152,7 +146,13 @@ router.get('/voler/:ressourceVolee/:quantiteVolee', function(req, res, next) {
     res.send({success: false, raison: 'stop'})
   }
 
-  var quantiteVolee = joueur.se_faire_voler(req.params.ressourceVolee, req.params.quantiteVolee);
+  if(param.observation) // voleur détecté
+  {
+    res.send({success: false, ip: param.ip, port: param.port, raison: 'observation'});
+    return;
+  }
+
+  var quantiteVolee = joueur.se_faire_voler(param, req.params.ressourceVolee, req.params.quantiteVolee);
 
   res.json({success: true, quantiteVolee: quantiteVolee}); // un vol qui échoue renvoie 0
 });

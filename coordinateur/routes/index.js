@@ -197,8 +197,8 @@ router.post('/regles', function(req, res, next) {
       var commande = 'cd ../joueur && npm install && CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' node bin/www ' + client.ip + ' ' + client.port;
       console.log(commande);
       exec(commande, function(err, stdout, stderr){
-        sys.print('stdout :' + stdout);
-        sys.print('stderr :' + stderr);
+        console.log('stdout :' + stdout);
+        console.log('stderr :' + stderr);
       });
     }
   }
@@ -212,8 +212,8 @@ router.post('/regles', function(req, res, next) {
       var commande = 'cd ../producteur && npm install && CIP=' + regles.coordinateur.ip + ' CPORT=' + regles.coordinateur.port + ' node bin/www ' + client.ip + ' ' + client.port;
       console.log(commande);
       exec(commande, function(err, stdout, stderr){
-        sys.print('stdout :' + stdout);
-        sys.print('stderr :' + stderr);
+        console.log('stdout :' + stdout);
+        console.log('stderr :' + stderr);
       });
     }
   }
@@ -242,8 +242,6 @@ router.get('/inscription', function(req, res, next) {
     }
 
     data.find({}).sort({joueur: 1, date: 1}).exec(function (err, data) {
-      console.log("Base de données :");
-      // console.log(data);
       res.render('inscription', {regles: regles, nJoueurs: nJoueurs, nProducteurs: nProducteurs, data: data});
     });
   }

@@ -11,19 +11,24 @@ function f_observer(param, agents, cibles)
   // on effectue une requête sur chaque agent pour récupérer ses informations
   for(var i = 0; i < agents.joueurs.length; i++)
   {
-    var iInterne = i;
     request.get('http://' + agents.joueurs[i].ip + ':' + agents.joueurs[i].port + '/show_ressource', function(err, res, body){
+      if(err)
+      {
+        console.log(err);
+        return;
+      }
+
       var resultat = JSON.parse(body);
 
       if(resultat.success) // si on obtient des informations correctes, on les ajoute à un tableau qui sera réutilisé
       {
-        cibles.push({ip: agents.joueurs[iInterne].ip, port: agents.joueurs[iInterne].port, objectif: resultat.objectif});
+        cibles.push({ip: resultat.ip, port: resultat.port, objectif: resultat.objectif});
       }
       else if(resultat.raison && resultat.raison == 'stop') // si l'agent est arrêté, on le supprime en local
       {
         for(var j = 0; j < agents.joueurs.length; j++)
         {
-          if(agents.joueurs[iInterne].ip == agents.joueurs[j].ip && agents.joueurs[iInterne].port == agents.joueurs[j].port)
+          if(resultat.ip == agents.joueurs[j].ip && resultat.port == agents.joueurs[j].port)
           {
             agents.joueurs.splice(j, 1); // on supprime l'agent qui a arrêté
 
@@ -46,15 +51,13 @@ function f_voler(param, agents, cible, ressourceVolee, quantiteVolee)
 
     var resultat = JSON.parse(body);
 
-    console.log(resultat);
-
     if(resultat.success) // mise à jour des objectifs
     {
       for(var i = 0; i < param.objectif.length; i++)
       {
         if(param.objectif[i].nom == ressourceVolee)
         {
-          param.objectif[i].quantite += resultat.quantiteVolee;
+          param.objectif[i].quantite += parseInt(resultat.quantiteVolee);
         }
       }
     }
@@ -64,15 +67,72 @@ function f_voler(param, agents, cible, ressourceVolee, quantiteVolee)
       {
         if(agents.joueurs[i].ip == cible.ip && agents.joueurs[i].port == cible.port)
         {
-          agents.splice(i, 1); // on se supprime
+          agents.joueurs.splice(i, 1); // on se supprime
 
           return;
+        }
+      }
+    }
+    else if(resultat.raison && resultat.raison == 'observation')
+    {
+      for(var i = 0; i < param.objectif.length; i++)
+      {
+        if(param.objectif[i].nom == ressourceVolee)
+        {
+          if(param.objectif[i].quantite > quantiteVolee)
+          {
+            param.objectif[i].quantite -= quantiteVolee;
+          }
+          else
+          {
+            param.objectif[i].quantite = 0;
+          }
         }
       }
     }
 
     return;
   });
+}
+
+function f_cooperatif(param, agents)
+{
+  // on cherche la ressource où l'on est le moins avancé dans les objectifs
+  var ressourceLaMoinsAvancee, quantiteLaMoinsAvancee = 0;
+
+  for(var i = 0; i < param.objectif.length; i++)
+  {
+    if(param.objectif[i].quantite_demandee - param.objectif[i].quantite > quantiteLaMoinsAvancee)
+    {
+      quantiteLaMoinsAvancee = param.objectif[i].quantite_demandee - param.objectif[i].quantite;
+      ressourceLaMoinsAvancee = param.objectif[i].nom;
+    }
+  }
+
+  // si une ressource a été trouvée
+  if(ressourceLaMoinsAvancee)
+  {
+    // on cherche un producteur qui produit cette ressource
+    for(var i = 0; i < agents.producteurs.length; i++)
+    {
+      if(agents.producteurs[i].ressource == ressourceLaMoinsAvancee)
+      {
+        // requête de récupération de ressource chez le producteur choisi
+        request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
+
+          for(var j = 0; j < param.objectif.length; j++)
+          {
+            if(param.objectif[j].nom == ressourceLaMoinsAvancee)
+            {
+              param.objectif[j].quantite += parseInt(body);
+            }
+          }
+        });
+
+        return;
+      }
+    }
+  }
 }
 
 module.exports = {
@@ -130,42 +190,7 @@ module.exports = {
   */
   cooperatif: function(param, agents)
   {
-    // on cherche la ressource où l'on est le moins avancé dans les objectifs
-    var ressourceLaMoinsAvancee, quantiteLaMoinsAvancee = 0;
-
-    for(var i = 0; i < param.objectif.length; i++)
-    {
-      if(param.objectif[i].quantite_demandee - param.objectif[i].quantite > quantiteLaMoinsAvancee)
-      {
-        quantiteLaMoinsAvancee = param.objectif[i].quantite_demandee - param.objectif[i].quantite;
-        ressourceLaMoinsAvancee = param.objectif[i].nom;
-      }
-    }
-
-    // si une ressource a été trouvée
-    if(ressourceLaMoinsAvancee)
-    {
-      // on cherche un producteur qui produit cette ressource
-      for(var i = 0; i < agents.producteurs.length; i++)
-      {
-        if(agents.producteurs[i].ressource == ressourceLaMoinsAvancee)
-        {
-          // requête de récupération de ressource chez le producteur choisi
-          request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
-
-            for(var j = 0; j < param.objectif.length; j++)
-            {
-              if(param.objectif[j].nom == ressourceLaMoinsAvancee)
-              {
-                param.objectif[j].quantite += parseInt(body);
-              }
-            }
-          });
-
-          return;
-        }
-      }
-    }
+    f_cooperatif(param, agents);
   },
   /*
     IA individualiste
@@ -176,7 +201,7 @@ module.exports = {
     // on cherche la 1ère ressource qu'on a pas réussi à obtenir complètement
     for(var i = 0; i < param.objectif.length; i++)
     {
-      if(param.objectif[i].quantite_demandee >= param.objectif[i].quantite)
+      if(param.objectif[i].quantite_demandee > param.objectif[i].quantite)
       {
         // on cherche le 1er producteur qui produit cette ressource
         for(var j = 0; j < agents.producteurs.length; j++)
@@ -184,7 +209,7 @@ module.exports = {
           if(agents.producteurs[j].ressource == param.objectif[i].nom)
           {
             // requête de récupération de ressource chez le producteur choisi
-            request.get('http://' + agents.producteurs[i].ip + ':' + agents.producteurs[i].port + '/get_ressource/' + param.Nressources, function(err, res, body){
+            request.get('http://' + agents.producteurs[j].ip + ':' + agents.producteurs[j].port + '/get_ressource/' + param.Nressources, function(err, res, body){
               for(var k = 0; k < param.objectif.length; k++)
               {
                 if(param.objectif[k].nom == param.objectif[i].nom)
@@ -206,8 +231,6 @@ module.exports = {
   */
   voleur: function(param, agents, cibles)
   {
-    console.log("test 0 passé");
-
     if(param.action) // voler
     {
       // on vérifie d'abord s'il reste des agents à voler, sinon on passe en mode coopératif
@@ -216,8 +239,6 @@ module.exports = {
         f_cooperatif(param, agents);
         return;
       }
-
-      console.log("test 1 passé");
 
       param.action = false;
 
@@ -254,9 +275,6 @@ module.exports = {
           }
         }
 
-
-        console.log(cibles[iRessourceLaMoinsAvancee]);
-
         // ensuite si on a trouvé quelqu'un on le vole
         if(iRessourceLaMoinsAvancee > 0)
         {
@@ -280,6 +298,8 @@ module.exports = {
     // action spéciale
     if(param.action)
     {
+      var cibles = [];
+
       param.action = false;
       f_observer(param, agents, cibles); // cibles est inutilisé
     }
